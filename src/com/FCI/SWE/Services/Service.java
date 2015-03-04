@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.FCI.SWE.Models.UserEntity;
+import com.FCI.SWE.Models.User;
 
 /**
  * This class contains REST services, also contains action function for web
@@ -39,16 +39,15 @@ import com.FCI.SWE.Models.UserEntity;
 @Path("/")
 @Produces("text/html")
 public class Service {
-	
-	
-	/*@GET
-	@Path("/index")
-	public Response index() {
-		return Response.ok(new Viewable("/jsp/entryPoint")).build();
-	}*/
 
+	/*
+	 * @GET
+	 * 
+	 * @Path("/index") public Response index() { return Response.ok(new
+	 * Viewable("/jsp/entryPoint")).build(); }
+	 */
 
-		/**
+	/**
 	 * Registration Rest service, this service will be called to make
 	 * registration. This function will store user data in data store
 	 * 
@@ -64,7 +63,7 @@ public class Service {
 	@Path("/RegistrationService")
 	public String registrationService(@FormParam("uname") String uname,
 			@FormParam("email") String email, @FormParam("password") String pass) {
-		UserEntity user = new UserEntity(uname, email, pass);
+		User user = new User(uname, email, pass);
 		user.saveUser();
 		JSONObject object = new JSONObject();
 		object.put("Status", "OK");
@@ -74,8 +73,11 @@ public class Service {
 	/**
 	 * Login Rest Service, this service will be called to make login process
 	 * also will check user data and returns new user from datastore
-	 * @param uname provided user name
-	 * @param pass provided user password
+	 * 
+	 * @param uname
+	 *            provided user name
+	 * @param pass
+	 *            provided user password
 	 * @return user in json format
 	 */
 	@POST
@@ -83,7 +85,7 @@ public class Service {
 	public String loginService(@FormParam("uname") String uname,
 			@FormParam("password") String pass) {
 		JSONObject object = new JSONObject();
-		UserEntity user = UserEntity.getUser(uname, pass);
+		User user = User.getUser(uname, pass);
 		if (user == null) {
 			object.put("Status", "Failed");
 
@@ -92,10 +94,17 @@ public class Service {
 			object.put("name", user.getName());
 			object.put("email", user.getEmail());
 			object.put("password", user.getPass());
+			object.put("id", user.getId());
 		}
 
 		return object.toString();
 
+	}
+
+	@POST
+	@Path("/LogoutService")
+	public void LogoutService() {
+		User.logout();
 	}
 
 }

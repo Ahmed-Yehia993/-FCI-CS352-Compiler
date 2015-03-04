@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.FCI.SWE.Models.UserEntity;
+import com.FCI.SWE.Models.User;
 
 /**
  * This class contains REST services, also contains action function for web
@@ -93,7 +93,7 @@ public class UserController {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String response(@FormParam("uname") String uname,
 			@FormParam("email") String email, @FormParam("password") String pass) {
-		String serviceUrl = "http://fci-swe-apps.appspot.com/rest/RegistrationService";
+		String serviceUrl = "http://localhost:8888/rest/RegistrationService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "uname=" + uname + "&email=" + email
@@ -104,8 +104,8 @@ public class UserController {
 			connection.setDoInput(true);
 			connection.setInstanceFollowRedirects(false);
 			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(60000);  //60 Seconds
-			connection.setReadTimeout(60000);  //60 Seconds
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
 			connection.setRequestProperty("Content-Type",
 					"application/x-www-form-urlencoded;charset=UTF-8");
 			OutputStreamWriter writer = new OutputStreamWriter(
@@ -159,7 +159,7 @@ public class UserController {
 	@Produces("text/html")
 	public Response home(@FormParam("uname") String uname,
 			@FormParam("password") String pass) {
-		String serviceUrl = "http://fci-swe-apps.appspot.com/rest/LoginService";
+		String serviceUrl = "http://localhost:8888/rest/LoginService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "uname=" + uname + "&password=" + pass;
@@ -169,9 +169,9 @@ public class UserController {
 			connection.setDoInput(true);
 			connection.setInstanceFollowRedirects(false);
 			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(60000);  //60 Seconds
-			connection.setReadTimeout(60000);  //60 Seconds
-			
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
+
 			connection.setRequestProperty("Content-Type",
 					"application/x-www-form-urlencoded;charset=UTF-8");
 			OutputStreamWriter writer = new OutputStreamWriter(
@@ -193,7 +193,7 @@ public class UserController {
 			if (object.get("Status").equals("Failed"))
 				return null;
 			Map<String, String> map = new HashMap<String, String>();
-			UserEntity user = UserEntity.getUser(object.toJSONString());
+			User user = User.getUser(object.toJSONString());
 			map.put("name", user.getName());
 			map.put("email", user.getEmail());
 			return Response.ok(new Viewable("/jsp/home", map)).build();
@@ -215,5 +215,36 @@ public class UserController {
 
 	}
 
+	@GET
+	@Path("/logout")
+	@Produces("text/html")
+	public Response logout() {
+		//System.out.println("HERE");
+		String serviceUrl = "http://localhost:8888/rest/LogoutService";
+		try {
+			URL url = new URL(serviceUrl);
+
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			return Response.ok(new Viewable("/jsp/entryPoint")).build();
+			// connection.disconnect();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 
 }
