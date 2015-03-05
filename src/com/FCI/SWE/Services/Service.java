@@ -1,30 +1,14 @@
 package com.FCI.SWE.Services;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.server.mvc.Viewable;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
+import com.FCI.SWE.Models.FriendShip;
 import com.FCI.SWE.Models.User;
 
 /**
@@ -105,6 +89,42 @@ public class Service {
 	@Path("/LogoutService")
 	public void LogoutService() {
 		User.logout();
+	}
+
+	@POST
+	@Path("/addFriendService")
+	public String addFriendService(@FormParam("recieverID") String recieverID
+			) {
+		//System.out.println("here service " + recieverID);
+		JSONObject object = new JSONObject();
+		if (FriendShip
+				.sendRequest(
+						String.valueOf(User.getCurrentActiveUser().getId()),
+						recieverID))
+			object.put("Status", "OK");
+		else
+			object.put("Status", "Failed");
+
+		return object.toString();
+	}
+
+	@POST
+	@Path("/preaddFriendService")
+	public String preaddFriendService() {
+		
+		JSONObject object = new JSONObject();
+		long[] temp = FriendShip.getUsers(String.valueOf(User
+				.getCurrentActiveUser().getId()));
+		object.put("size", temp.length + "");
+		for (int i = 0; i < temp.length; i++) {
+			User user = User.getUser(temp[i]);
+			object.put("name" + i, user.getName());
+			object.put("email" + i, user.getEmail());
+			object.put("id" + i, user.getId());
+			// System.out.println(re[i].getId());
+		}
+
+		return object.toString();
 	}
 
 }

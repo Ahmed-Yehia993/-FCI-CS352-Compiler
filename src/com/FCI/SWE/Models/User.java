@@ -43,6 +43,10 @@ public class User {
 	 * @param password
 	 *            user provided password
 	 */
+	public User() {
+
+	}
+
 	public User(String name, String email, String password) {
 		this.name = name;
 		this.email = email;
@@ -126,14 +130,33 @@ public class User {
 		Query gaeQuery = new Query("users");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		for (Entity entity : pq.asIterable()) {
-		//	System.out.println(entity.getProperty("name").toString());
+			// System.out.println(entity.getProperty("name").toString());
 			if (entity.getProperty("name").toString().equals(name)
 					&& entity.getProperty("password").toString().equals(pass)) {
 				User returnedUser = new User(entity.getProperty("name")
 						.toString(), entity.getProperty("email").toString(),
 						entity.getProperty("password").toString());
-				//System.out.println(entity.toString());
-				
+				// System.out.println(entity.toString());
+
+				returnedUser.setId(entity.getKey().getId());
+				return returnedUser;
+			}
+		}
+
+		return null;
+	}
+
+	public static User getUser(long id) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+
+		Query gaeQuery = new Query("users");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getKey().getId() == id) {
+				User returnedUser = new User(entity.getProperty("name")
+						.toString(), entity.getProperty("email").toString(),
+						entity.getProperty("password").toString());
 				returnedUser.setId(entity.getKey().getId());
 				return returnedUser;
 			}
@@ -166,4 +189,5 @@ public class User {
 		return true;
 
 	}
+
 }

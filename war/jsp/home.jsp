@@ -8,12 +8,11 @@
 </head>
 <body>
 <p> Welcome b2a ya ${it.name} </p>
-<p> This is should be user home page </p>
-<p> Current implemented services "http://fci-swe-apps.appspot.com/rest/RegistrationService --- {requires: uname, email, password}" </p>
-<p> and "http://fci-swe-apps.appspot.com/rest/LoginService --- {requires: uname,  password}" </p>
-<p> you should implement sendFriendRequest service and addFriend service </p>
 <form action="/social/logout" >
 <input type="submit" value="sign out" >
+</form>
+<form action="/social/preaddfriend" method="get">
+<input type="submit" value="add friend" >
 </form>
 </body>
 </html>
