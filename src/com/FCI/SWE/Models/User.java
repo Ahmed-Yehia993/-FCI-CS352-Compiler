@@ -176,15 +176,35 @@ public class User {
 		Query gaeQuery = new Query("users");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
+        
+        if(list.size() != 0)
+        {
+    		for (Entity entity : pq.asIterable()) {
+    			if (entity.getProperty("email").toString().equals(this.email)) {				
+    				return false;
+    			}
+    		}
+    		
+    		Entity employee = new Entity("users", list.get(list.size() - 1)
+    				.getKey().getId() + 1);
 
-		Entity employee = new Entity("users", list.get(list.size() - 1)
-				.getKey().getId() + 1);
+    		employee.setProperty("name", this.name);
+    		employee.setProperty("email", this.email);
+    		employee.setProperty("password", this.password);
 
-		employee.setProperty("name", this.name);
-		employee.setProperty("email", this.email);
-		employee.setProperty("password", this.password);
+    		datastore.put(employee);
+        }
+        else
+        {
+    		Entity employee = new Entity("users",1);
 
-		datastore.put(employee);
+    		employee.setProperty("name", this.name);
+    		employee.setProperty("email", this.email);
+    		employee.setProperty("password", this.password);
+
+    		datastore.put(employee);
+        }
+
 
 		return true;
 

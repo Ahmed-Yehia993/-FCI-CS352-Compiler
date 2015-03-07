@@ -7,12 +7,12 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -26,7 +26,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.FCI.SWE.Models.FriendShip;
 import com.FCI.SWE.Models.User;
 
 /**
@@ -142,7 +141,7 @@ public class UserController {
 		 * UserEntity user = new UserEntity(uname, email, pass);
 		 * user.saveUser(); return uname;
 		 */
-		return "Failed";
+		return "Error, There is a user with this Email found";
 	}
 
 	/**
@@ -220,8 +219,9 @@ public class UserController {
 	@GET
 	@Path("/logout")
 	@Produces("text/html")
-	public Response logout() {
-		// System.out.println("HERE");
+	public Response logout() throws ParseException {
+		System.out.println("HERE logout 1");
+		String urlParameters = "";
 		String serviceUrl = "http://localhost:8888/rest/LogoutService";
 		try {
 			URL url = new URL(serviceUrl);
@@ -236,6 +236,24 @@ public class UserController {
 			connection.setReadTimeout(60000); // 60 Seconds
 			connection.setRequestProperty("Content-Type",
 					"application/x-www-form-urlencoded;charset=UTF-8");
+			
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			System.out.println(retJson);
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse(retJson);
+			JSONObject object = (JSONObject) obj;
 			return Response.ok(new Viewable("/jsp/entryPoint")).build();
 			// connection.disconnect();
 		} catch (MalformedURLException e) {
@@ -302,6 +320,7 @@ public class UserController {
 				long ii = Long.parseLong(oo.toString());
 				map.put("id" + i, ii + "");
 			}
+		    
 			return Response.ok(new Viewable("/jsp/preaddfriend", map)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -321,6 +340,64 @@ public class UserController {
 
 	}
 
+	@POST
+	@Path("/unfriend")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String unFriend(@FormParam("recieverID") String receiverID) {
+		//System.out.println("Hello controller " + receiverID);
+		String serviceUrl = "http://localhost:8888/rest/unFriendService";
+		try {
+			URL url = new URL(serviceUrl);
+			String urlParameters = "recieverID=" + receiverID ;
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse(retJson);
+			JSONObject object = (JSONObject) obj;
+			if (object.get("Status").equals("Failed"))
+				return null;
+			if (object.get("Status").equals("OK"))
+				return "now, you become unfriend with him";
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		 * UserEntity user = new UserEntity(uname, email, pass);
+		 * user.saveUser(); return uname;
+		 */
+		return null;
+
+	}
+    
 	@POST
 	@Path("/addfriend")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -378,6 +455,204 @@ public class UserController {
 		return null;
 
 	}
+	
+	@GET
+	@Path("/preacceptfriend")
+	@Produces("text/html")
+	public Response preacceptFriend() {
+		System.out.println("contrll");
+		String frinedid = String.valueOf(User.getCurrentActiveUser().getId()); // myid
+		// @FormParam("senderID") String frinedid
+		String serviceUrl = "http://localhost:8888/rest/preacceptFriendService";
+		try {
+			URL url = new URL(serviceUrl);
+			String urlParameters = "&senderID=" + frinedid;// + " &receiverID="+
+															// myid;
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
 
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
 
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			System.out.println(retJson);
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse(retJson);
+			JSONObject object = (JSONObject) obj;
+			Object o = object.get("size");
+			long size = Long.parseLong(o.toString());
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("size", size + "");
+			for (int i = 0; i < size; i++) {
+				map.put("name" + i, (String) object.get("name" + i));
+				map.put("email" + i, (String) object.get("email" + i));
+				Object oo = object.get("id" + i);
+				long ii = Long.parseLong(oo.toString());
+				map.put("id" + i, ii + "");
+			}
+			return Response.ok(new Viewable("/jsp/preacceptfriend", map)).build();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		 * UserEntity user = new UserEntity(uname, email, pass);
+		 * user.saveUser(); return uname;
+		 */
+		return null;		
+	}
+
+	@POST
+	@Path("/acceptfriend")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String acceptFriend(@FormParam("recieverID") String receiverID) {
+		//System.out.println("Hello controller " + receiverID);
+		String serviceUrl = "http://localhost:8888/rest/acceptFriendService";
+		try {
+			URL url = new URL(serviceUrl);
+			String urlParameters = "recieverID=" + receiverID ;
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse(retJson);
+			JSONObject object = (JSONObject) obj;
+			if (object.get("Status").equals("Failed"))
+				return null;
+			if (object.get("Status").equals("OK"))
+				return "you become Friends with him now :) :)";
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		 * UserEntity user = new UserEntity(uname, email, pass);
+		 * user.saveUser(); return uname;
+		 */
+		return null;
+
+	}
+    
+	@GET
+	@Path("/showMyfriends")
+	@Produces("text/html")
+	public Response showMyfriends() {
+		// ,@FormParam("receiverID")
+		// String
+		String frinedid = String.valueOf(User.getCurrentActiveUser().getId()); // myid
+		// @FormParam("senderID") String frinedid
+		String serviceUrl = "http://localhost:8888/rest/myFriendsService";
+		try {
+			URL url = new URL(serviceUrl);
+			String urlParameters = "&senderID=" + frinedid;// + " &receiverID="+
+															// myid;
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			System.out.println(retJson);
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse(retJson);
+			JSONObject object = (JSONObject) obj;
+			Object o = object.get("size");
+			long size = Long.parseLong(o.toString());
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("size", size + "");
+			for (int i = 0; i < size; i++) {
+				map.put("name" + i, (String) object.get("name" + i));
+				map.put("email" + i, (String) object.get("email" + i));
+				Object oo = object.get("id" + i);
+				long ii = Long.parseLong(oo.toString());
+				map.put("id" + i, ii + "");
+			}
+			return Response.ok(new Viewable("/jsp/myfriends", map)).build();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		 * UserEntity user = new UserEntity(uname, email, pass);
+		 * user.saveUser(); return uname;
+		 */
+		return null;
+
+	}
 }

@@ -1,7 +1,6 @@
 package com.FCI.SWE.Services;
 
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -48,9 +47,13 @@ public class Service {
 	public String registrationService(@FormParam("uname") String uname,
 			@FormParam("email") String email, @FormParam("password") String pass) {
 		User user = new User(uname, email, pass);
-		user.saveUser();
 		JSONObject object = new JSONObject();
-		object.put("Status", "OK");
+		if(user.saveUser()){
+			object.put("Status", "OK");
+		}
+		else{
+			object.put("Status", "Failed");
+		}
 		return object.toString();
 	}
 
@@ -87,15 +90,18 @@ public class Service {
 
 	@POST
 	@Path("/LogoutService")
-	public void LogoutService() {
+	public String LogoutService() {
+		System.out.println("HERE logout 2");
+		JSONObject object = new JSONObject();
 		User.logout();
+		object.put("Status", "OK");
+		return object.toString();
 	}
 
 	@POST
 	@Path("/addFriendService")
 	public String addFriendService(@FormParam("recieverID") String recieverID
 			) {
-		//System.out.println("here service " + recieverID);
 		JSONObject object = new JSONObject();
 		if (FriendShip
 				.sendRequest(
@@ -107,7 +113,23 @@ public class Service {
 
 		return object.toString();
 	}
+    
+	@POST
+	@Path("/unFriendService")
+	public String unFriendService(@FormParam("recieverID") String recieverID
+			) {
+		JSONObject object = new JSONObject();
+		if (FriendShip
+				.unFriendRequest(
+						String.valueOf(User.getCurrentActiveUser().getId()),
+						recieverID))
+			object.put("Status", "OK");
+		else
+			object.put("Status", "Failed");
 
+		return object.toString();
+	}
+	
 	@POST
 	@Path("/preaddFriendService")
 	public String preaddFriendService() {
@@ -126,5 +148,56 @@ public class Service {
 
 		return object.toString();
 	}
+   
+	@POST
+	@Path("/preacceptFriendService")
+	public String preacceptFriendService() {
+		JSONObject object = new JSONObject();
+		long[] temp = FriendShip.getNotifications(String.valueOf(User
+				.getCurrentActiveUser().getId()));
+		object.put("size", temp.length + "");
+		System.out.println(temp.length);
+		for (int i = 0; i < temp.length; i++) {			
+			User user = User.getUser(temp[i]);
+			object.put("name" + i, user.getName());
+			object.put("email" + i, user.getEmail());
+			object.put("id" + i, user.getId());
+			// System.out.println(re[i].getId());
+		}
 
+		return object.toString();
+	}
+    
+	@POST
+	@Path("/acceptFriendService")
+	public String acceptFriendService(@FormParam("recieverID") String recieverID) {
+		JSONObject object = new JSONObject();
+		if (FriendShip
+				.acceptFriendRequest(
+						String.valueOf(User.getCurrentActiveUser().getId()),
+						recieverID))
+			object.put("Status", "OK");
+		else
+			object.put("Status", "Failed");
+
+		return object.toString();
+	}
+	@POST
+	@Path("/myFriendsService")
+	public String myFriendsService() {
+		
+		JSONObject object = new JSONObject();
+		long[] temp = FriendShip.getMyFriends(String.valueOf(User
+				.getCurrentActiveUser().getId()));
+		object.put("size", temp.length + "");
+		for (int i = 0; i < temp.length; i++) {
+			User user = User.getUser(temp[i]);
+			object.put("name" + i, user.getName());
+			object.put("email" + i, user.getEmail());
+			object.put("id" + i, user.getId());
+			// System.out.println(re[i].getId());
+		}
+
+		return object.toString();
+	}
 }
