@@ -30,7 +30,7 @@ public class FriendShip {
 		}
 		else{
 			Entity request = new Entity("notification", 1);
-
+            
 			request.setProperty("senderID", senderID);
 			request.setProperty("receiverID", receiverID);
 			datastore.put(request);
@@ -53,11 +53,11 @@ public class FriendShip {
 			if(entity.getProperty("friendID1").toString().equals(senderID) && entity.getProperty("friendID2").toString().equals(receiverID) || 
 					entity.getProperty("friendID2").toString().equals(senderID) && entity.getProperty("friendID1").toString().equals(receiverID))
 			{
-				//System.out.println("ok");
 				Entity req = new Entity("friends", entity.getKey().getId());
-				req.setProperty("friendID1", String.valueOf(-1));
-				req.setProperty("friendID2",  String.valueOf(-1));
-			    data.put(req);
+				data.delete(entity.getKey());
+				//req.setProperty("friendID1", String.valueOf(-1));
+				//req.setProperty("friendID2",  String.valueOf(-1));
+			    //data.put(req);
 			}
 		}
 		return true;
@@ -98,11 +98,11 @@ public class FriendShip {
 			if(entity.getProperty("senderID").toString().equals(senderID) && entity.getProperty("receiverID").toString().equals(receiverID) || 
 					entity.getProperty("receiverID").toString().equals(senderID) && entity.getProperty("senderID").toString().equals(receiverID))
 			{
-				System.out.println("ok");
 				Entity req = new Entity("notification", entity.getKey().getId());
-				req.setProperty("senderID", String.valueOf(-1));
-				req.setProperty("receiverID",  String.valueOf(-1));
-			    datastore.put(req);
+				data.delete(entity.getKey());
+				//req.setProperty("senderID", String.valueOf(-1));
+				//req.setProperty("receiverID",  String.valueOf(-1));
+			    //datastore.put(req);
 			}
 		}
 		return true;
