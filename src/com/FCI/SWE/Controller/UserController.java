@@ -9,10 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,11 +20,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.server.mvc.Viewable;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.FCI.SWE.Models.User;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
 
 /**
  * This class contains REST services, also contains action function for web
@@ -273,8 +273,7 @@ public class UserController {
 	public Response preaddFriend() {
 		// ,@FormParam("receiverID")
 		// String
-		String frinedid = String.valueOf(User.getCurrentActiveUser().getId()); // myid
-		// @FormParam("senderID") String frinedid
+		String frinedid = String.valueOf(User.getCurrentActiveUser().getId());
 		String serviceUrl = "http://localhost:8888/rest/preaddFriendService";
 		try {
 			URL url = new URL(serviceUrl);
@@ -305,23 +304,22 @@ public class UserController {
 			}
 			writer.close();
 			reader.close();
-			System.out.println(retJson);
+			
+			Map<String, Vector<User>> PassedUsers = new HashMap<String, Vector<User>>();
 			JSONParser parser = new JSONParser();
-			Object obj = parser.parse(retJson);
-			JSONObject object = (JSONObject) obj;
-			Object o = object.get("size");
-			long size = Long.parseLong(o.toString());
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("size", size + "");
-			for (int i = 0; i < size; i++) {
-				map.put("name" + i, (String) object.get("name" + i));
-				map.put("email" + i, (String) object.get("email" + i));
-				Object oo = object.get("id" + i);
-				long ii = Long.parseLong(oo.toString());
-				map.put("id" + i, ii + "");
+			//System.out.println(retJson);
+			//Object obj  = parser.parse(retJson);
+			//JSONArray array = new JSONArray();
+			//array.add(obj);
+			JSONArray array = (JSONArray) parser.parse(retJson);
+			Vector<User> users = new Vector<User>();
+			for (int i = 0; i < array.size() ; i++) {
+				JSONObject object ;
+				object = (JSONObject) array.get(i);
+				users.add(User.parseUserInfo(object.toJSONString()));
 			}
-		    
-			return Response.ok(new Viewable("/jsp/preaddfriend", map)).build();
+		    PassedUsers.put("usersList",users);
+			return Response.ok(new Viewable("/jsp/preaddfriend", PassedUsers)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -342,7 +340,7 @@ public class UserController {
 
 	@POST
 	@Path("/unfriend")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces("text/html")
 	public String unFriend(@FormParam("recieverID") String receiverID) {
 		//System.out.println("Hello controller " + receiverID);
 		String serviceUrl = "http://localhost:8888/rest/unFriendService";
@@ -459,15 +457,12 @@ public class UserController {
 	@GET
 	@Path("/preacceptfriend")
 	@Produces("text/html")
-	public Response preacceptFriend() {
-		System.out.println("contrll");
-		String frinedid = String.valueOf(User.getCurrentActiveUser().getId()); // myid
-		// @FormParam("senderID") String frinedid
+	public Response preacceptFriend() { 
+		String frinedid = String.valueOf(User.getCurrentActiveUser().getId());
 		String serviceUrl = "http://localhost:8888/rest/preacceptFriendService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "&senderID=" + frinedid;// + " &receiverID="+
-															// myid;
+			String urlParameters = "&senderID=" + frinedid;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -493,22 +488,19 @@ public class UserController {
 			}
 			writer.close();
 			reader.close();
-			System.out.println(retJson);
-			JSONParser parser = new JSONParser();
-			Object obj = parser.parse(retJson);
-			JSONObject object = (JSONObject) obj;
-			Object o = object.get("size");
-			long size = Long.parseLong(o.toString());
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("size", size + "");
-			for (int i = 0; i < size; i++) {
-				map.put("name" + i, (String) object.get("name" + i));
-				map.put("email" + i, (String) object.get("email" + i));
-				Object oo = object.get("id" + i);
-				long ii = Long.parseLong(oo.toString());
-				map.put("id" + i, ii + "");
+			Map<String, Vector<User>> PassUsers = new HashMap<String, Vector<User>>();
+			JSONParser parser = new JSONParser(); 
+			JSONArray array = (JSONArray) parser.parse(retJson);
+			Vector<User> users = new Vector<User>();
+			for (int i = 0; i < array.size() ; i++) {
+				JSONObject object ;
+				object = (JSONObject) array.get(i);
+				
+				users.add(User.parseUserInfo(object.toJSONString()));
 			}
-			return Response.ok(new Viewable("/jsp/preacceptfriend", map)).build();
+			//System.out.println(users.get(0));
+		    PassUsers.put("notificationList",users);
+			return Response.ok(new Viewable("/jsp/preacceptfriend", PassUsers)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -622,22 +614,17 @@ public class UserController {
 			}
 			writer.close();
 			reader.close();
-			System.out.println(retJson);
-			JSONParser parser = new JSONParser();
-			Object obj = parser.parse(retJson);
-			JSONObject object = (JSONObject) obj;
-			Object o = object.get("size");
-			long size = Long.parseLong(o.toString());
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("size", size + "");
-			for (int i = 0; i < size; i++) {
-				map.put("name" + i, (String) object.get("name" + i));
-				map.put("email" + i, (String) object.get("email" + i));
-				Object oo = object.get("id" + i);
-				long ii = Long.parseLong(oo.toString());
-				map.put("id" + i, ii + "");
+			Map<String, Vector<User>> UsersPassed = new HashMap<String, Vector<User>>();
+			JSONParser parser = new JSONParser(); 
+			JSONArray array = (JSONArray) parser.parse(retJson);
+			Vector<User> users = new Vector<User>();
+			for (int i = 0; i < array.size() ; i++) {
+				JSONObject object ;
+				object = (JSONObject) array.get(i);
+				users.add(User.parseUserInfo(object.toJSONString()));
 			}
-			return Response.ok(new Viewable("/jsp/myfriends", map)).build();
+			UsersPassed.put("FriendsList",users);
+			return Response.ok(new Viewable("/jsp/myfriends", UsersPassed)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

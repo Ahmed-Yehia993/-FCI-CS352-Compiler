@@ -1,10 +1,14 @@
 package com.FCI.SWE.Services;
 
+import java.util.Vector;
+
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.FCI.SWE.Models.FriendShip;
@@ -20,7 +24,7 @@ import com.FCI.SWE.Models.User;
  *
  */
 @Path("/")
-@Produces("text/html")
+@Produces(MediaType.TEXT_PLAIN)
 public class Service {
 
 	/*
@@ -132,40 +136,41 @@ public class Service {
 	
 	@POST
 	@Path("/preaddFriendService")
-	public String preaddFriendService() {
-		
-		JSONObject object = new JSONObject();
-		long[] temp = FriendShip.getUsers(String.valueOf(User
+	public String preaddFriendService() {	
+		Vector<User> users = FriendShip.getUsers(String.valueOf(User
 				.getCurrentActiveUser().getId()));
-		object.put("size", temp.length + "");
-		for (int i = 0; i < temp.length; i++) {
-			User user = User.getUser(temp[i]);
-			object.put("name" + i, user.getName());
-			object.put("email" + i, user.getEmail());
-			object.put("id" + i, user.getId());
-			// System.out.println(re[i].getId());
+		
+		JSONArray returnedJson = new JSONArray();
+		for (User user : users)
+		{
+			JSONObject object = new JSONObject();
+			object.put("id", user.getId());
+			object.put("name", user.getName());
+			object.put("email", user.getEmail());
+		   
+			returnedJson.add(object);
 		}
 
-		return object.toString();
+		return returnedJson.toJSONString();
 	}
    
 	@POST
 	@Path("/preacceptFriendService")
 	public String preacceptFriendService() {
-		JSONObject object = new JSONObject();
-		long[] temp = FriendShip.getNotifications(String.valueOf(User
+		Vector<User> users = FriendShip.getNotifications(String.valueOf(User
 				.getCurrentActiveUser().getId()));
-		object.put("size", temp.length + "");
-		System.out.println(temp.length);
-		for (int i = 0; i < temp.length; i++) {			
-			User user = User.getUser(temp[i]);
-			object.put("name" + i, user.getName());
-			object.put("email" + i, user.getEmail());
-			object.put("id" + i, user.getId());
-			// System.out.println(re[i].getId());
+		JSONArray returnedJson = new JSONArray();
+		for (User user : users)
+		{
+			JSONObject object = new JSONObject();
+			object.put("id", user.getId());
+			object.put("name", user.getName());
+			object.put("email", user.getEmail());
+		   
+			returnedJson.add(object);
 		}
 
-		return object.toString();
+		return returnedJson.toJSONString();
 	}
     
 	@POST
@@ -185,19 +190,20 @@ public class Service {
 	@POST
 	@Path("/myFriendsService")
 	public String myFriendsService() {
-		
-		JSONObject object = new JSONObject();
-		long[] temp = FriendShip.getMyFriends(String.valueOf(User
+		Vector<User> users = FriendShip.getMyFriends(String.valueOf(User
 				.getCurrentActiveUser().getId()));
-		object.put("size", temp.length + "");
-		for (int i = 0; i < temp.length; i++) {
-			User user = User.getUser(temp[i]);
-			object.put("name" + i, user.getName());
-			object.put("email" + i, user.getEmail());
-			object.put("id" + i, user.getId());
-			// System.out.println(re[i].getId());
+		
+		JSONArray returnedJson = new JSONArray();
+		for (User user : users)
+		{
+			JSONObject object = new JSONObject();
+			object.put("id", user.getId());
+			object.put("name", user.getName());
+			object.put("email", user.getEmail());
+		   
+			returnedJson.add(object);
 		}
 
-		return object.toString();
+		return returnedJson.toJSONString();
 	}
 }
