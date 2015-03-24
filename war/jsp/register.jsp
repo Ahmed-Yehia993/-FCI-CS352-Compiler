@@ -8,12 +8,26 @@
   <title>Welcome!</title>
 </head>
 <body>
-  <form action="/social/response" method="post">
-  Name : <input type="text" name="uname" /> <br>
-  Email : <input type="text" name="email" /> <br>
-  Password : <input type="password" name="password" /> <br>
-  <input type="submit" value="Register">
-  
+<div align="center" style=" margin: 200px;"  >
+<table cellpadding="5" bgcolor="#E8E8E8" >
+<form action="/social/response" method="post">
+   <tr>
+   <td><center><i><b>Name:</b></i></center></td>
+   <td><center><input type="text" name="uname" /></center></td>
+   </tr>
+   <tr>
+   <td><center><i><b>Email:</b></i></center></td>
+   <td><center><input type="text" name="email" /></center></td>
+   </tr>
+   <tr>
+   <td><center><i><b>Password:</b></i></center></td>
+   <td><center><input type="password" name="password" /></center></td>
+   </tr>
+   <tr>
+   <td colspan="4"><center><input type="submit" value="Register"></center></td>
+   </tr>
   </form>
+  </table>
+  </div>
 </body>
 </html>

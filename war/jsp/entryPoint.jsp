@@ -7,7 +7,16 @@
 <title>Insert title here</title>
 </head>
 <body>
-<a href="/social/signup/">Sign up</a> <br>
-<a href="/social/login/">Login</a> <br>
+<div align="center" style=" margin: 200px;">
+<table cellpadding="5" bgcolor="#E8E8E8" >
+   <tr>
+   <td><center><a href="/social/signup/">Sign up</a></center></td>
+   </tr>
+   <tr>
+   <td><center><a href="/social/login/">Login</a></center></td>
+   </tr>
+  
+  </table>
+  </div>
 </body>
 </html>

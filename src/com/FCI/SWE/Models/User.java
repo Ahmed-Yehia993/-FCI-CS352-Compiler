@@ -27,8 +27,8 @@ import com.google.appengine.api.datastore.Query;
  */
 public class User {
 	private long id;
-	private String name;
-	private String email;
+	public String name;
+	public String email;
 	private String password;
 
 	private static User currentActiveUser;
@@ -61,6 +61,16 @@ public class User {
 	public long getId() {
 		return id;
 	}
+	public String getIdString() {
+		return Long.toString(id);
+	}
+	public void setName(String name) {
+		this.name =  name;
+	}
+
+	public void setEmail(String email) {
+		this.email =  email;
+	}
 
 	public String getName() {
 		return name;
@@ -91,8 +101,24 @@ public class User {
 	 *            String in json format contains user data
 	 * @return Constructed user entity
 	 */
+	public static User parseUserInfo(String json) {
+		JSONParser parser = new JSONParser();
+		try {
+			JSONObject object = (JSONObject) parser.parse(json);
+			User user = new User();
+			user.setName(object.get("name").toString());
+			user.setEmail(object.get("email").toString());
+			user.setId(Long.parseLong(object.get("id").toString()));
+			
+			return user;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 	public static User getUser(String json) {
-		System.out.println(json);
 		JSONParser parser = new JSONParser();
 		try {
 			JSONObject object = (JSONObject) parser.parse(json);
@@ -176,15 +202,35 @@ public class User {
 		Query gaeQuery = new Query("users");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
+        
+        if(list.size() != 0)
+        {
+    		for (Entity entity : pq.asIterable()) {
+    			if (entity.getProperty("email").toString().equals(this.email)) {				
+    				return false;
+    			}
+    		}
+    		
+    		Entity employee = new Entity("users", list.get(list.size() - 1)
+    				.getKey().getId() + 1);
 
-		Entity employee = new Entity("users", list.get(list.size() - 1)
-				.getKey().getId() + 1);
+    		employee.setProperty("name", this.name);
+    		employee.setProperty("email", this.email);
+    		employee.setProperty("password", this.password);
 
-		employee.setProperty("name", this.name);
-		employee.setProperty("email", this.email);
-		employee.setProperty("password", this.password);
+    		datastore.put(employee);
+        }
+        else
+        {
+    		Entity employee = new Entity("users",1);
 
-		datastore.put(employee);
+    		employee.setProperty("name", this.name);
+    		employee.setProperty("email", this.email);
+    		employee.setProperty("password", this.password);
+
+    		datastore.put(employee);
+        }
+
 
 		return true;
 
