@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 <%@page import="com.FCI.SWE.Models.User"%>
+=======
+>>>>>>> 8f76aa76f075412c0bcaf1c97799b8ae0a9d0f9a
 <%@ page language="java" contentType="text/html; charset=windows-1256"
 	pageEncoding="windows-1256"%>
 <%@ taglib prefix="c" 
@@ -24,7 +27,10 @@
    <td><center>ID</center></td>
    <td><center>NAME</center></td>
    <td><center>E-MAIL</center></td>
+<<<<<<< HEAD
    
+=======
+>>>>>>> 8f76aa76f075412c0bcaf1c97799b8ae0a9d0f9a
 </tr>
 <c:forEach items="${it.usersList}" var="user" >
    <tr>
@@ -32,9 +38,13 @@
    <td><center><c:out value="${user.name}"></c:out></center></td>
    <td><center><c:out value="${user.email}"></c:out></center></td>
    </tr>
+<<<<<<< HEAD
   
 </c:forEach>
 
+=======
+</c:forEach>
+>>>>>>> 8f76aa76f075412c0bcaf1c97799b8ae0a9d0f9a
 </table>
 </div>
 </body>

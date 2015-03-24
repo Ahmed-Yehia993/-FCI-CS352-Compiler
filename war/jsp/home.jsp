@@ -13,6 +13,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+<<<<<<< HEAD
 	<div align="center">
 		<h1 name= "username">Welcome : ${it.name}</h1>
 		<h1>E-mail : ${it.email}</h1>
@@ -50,5 +51,29 @@
 			<input type="submit" value="Show My Friends">
 		</form>
 	</div>
+=======
+<div align="center">
+<h1> Welcome : ${it.name} </h1>
+<h1> E-mail  : ${it.email} </h1>
+</div>
+<br><br><br><br>
+<div align="center" style="width: 700px; margin-left: 300px; margin-right: 100px;"  >
+<form action="/social/logout" method="get">
+<input type="submit" value="sign out" >
+</form>
+<br>
+<form action="/social/preaddfriend" method="get">
+<input type="submit" value="add friend" >
+</form>
+<br>
+<form action="/social/preacceptfriend" method="get">
+<input type="submit" value="notification" >
+</form>
+<br>
+<form action="/social/showMyfriends" method="get">
+<input type="submit" value="Show My Friends" >
+</form>
+</div>
+>>>>>>> 8f76aa76f075412c0bcaf1c97799b8ae0a9d0f9a
 </body>
 </html>

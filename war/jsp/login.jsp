@@ -9,7 +9,11 @@
 <body>
 <div align="center" style=" margin: 200px;"  >
 <table cellpadding="5" bgcolor="#E8E8E8" >
+<<<<<<< HEAD
 <form action="/social/home" method="POST">
+=======
+<form action="/social/home" method="post">
+>>>>>>> 8f76aa76f075412c0bcaf1c97799b8ae0a9d0f9a
    <tr>
    <td><center><i><b>Name:</b></i></center></td>
    <td><center><input type="text" name="uname" /></center></td>
