@@ -15,38 +15,22 @@
    <td><center>ID</center></td>
    <td><center>NAME</center></td>
    <td><center>E-MAIL</center></td>
-<<<<<<< HEAD
-  
 </tr>
-
-=======
-</tr>
->>>>>>> 8f76aa76f075412c0bcaf1c97799b8ae0a9d0f9a
 <c:forEach items="${it.FriendsList}" var="user" >
    <tr>
    <td><center><c:out value="${user.id}"></c:out></center></td>
    <td><center><c:out value="${user.name}"></c:out></center></td>
    <td><center><c:out value="${user.email}"></c:out></center></td>
-<<<<<<< HEAD
-  
    </tr>
 </c:forEach>
+</table>
 
-</table>
-<br><br>
-<h1>Enter the id of friend to un friend </h1>
-=======
-   </tr>
-</c:forEach>
-</table>
 <br><br>
 <h1>Enter the id of friend to unfriend </h1>
->>>>>>> 8f76aa76f075412c0bcaf1c97799b8ae0a9d0f9a
 <form action="/social/unfriend"" method="post"> 
   <input type="text" name="recieverID" />
   <input type="submit" value="unfriend">
-</form> 
-<<<<<<< HEAD
+</form>
 
 <br><br>
 <h1>Enter the id of friend to send message </h1>
@@ -57,8 +41,6 @@
   <textarea rows="10" cols="50" name="text"></textarea>
 </form>
 
-=======
->>>>>>> 8f76aa76f075412c0bcaf1c97799b8ae0a9d0f9a
 </div>
 
 </body>
