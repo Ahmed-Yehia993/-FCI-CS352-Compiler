@@ -22,6 +22,8 @@
 		<h1 name="username">Welcome : ${it.name}</h1>
 		<h1>E-mail : ${it.email}</h1>
 		<% out.println("seesion value of id : " + id); %>
+<%-- 			<% out.println("seesion value of id : " + id); %> --%>
+	
 	</div>
 
 	<br>
