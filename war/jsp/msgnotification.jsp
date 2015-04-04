@@ -10,27 +10,29 @@
 </head>
 <body>
 <div align="center">
-<h1>Enter the id of the friend that you want to accept </h1>
-<form action="/social/acceptfriend" method="post"> 
+<h1>Enter the id of the msg that you seen </h1>
+<form action="/social/seenmsg" method="post"> 
   <input type="text" name="recieverID" />
   <input type="submit" value="Accept">
 </form>
 <br><br>
-<table cellspacing="5px" cellpadding="5px" border="2px" bgcolor="#E8E8E8" style="width:70%">
+<table cellspacing="10px" cellpadding="5px" border="2px" bgcolor="#E8E8E8" style="width:70%">
 <tr bgcolor="#E8E8E80">
    <td><center>ID</center></td>
-   <td><center>SENDER</center></td>
-   <td><center>RECEIVER</center></td>
-   <td><center>TIMESTAMP</center></td>
-   <td><center>TEXT</center></td>
+   <td><center>GroupID</center></td>
+   <td><center>SenderID</center></td>
+   <td><center>ReceiverID</center></td>
+   <td><center>Timestamp</center></td>
+   <td><center>Text</center></td>
 </tr>
-<c:forEach items="${it.msgnotificationList}" var="user" >
+<c:forEach items="${it.msgnotificationList}" var="msg" >
    <tr>
-   <td><center><c:out value="${user.id}"></c:out></center></td>
-   <td><center><c:out value="${user.sender}"></c:out></center></td>
-   <td><center><c:out value="${user.receiver}"></c:out></center></td>
-   <td><center><c:out value="${user.timestamp}"></c:out></center></td>
-   <td><center><c:out value="${user.text}"></c:out></center></td>
+   <td><center><c:out value="${msg.id}"></c:out></center></td>
+   <td><center><c:out value="${msg.groupID}"></c:out></center></td>
+   <td><center><c:out value="${msg.senderID}"></c:out></center></td>
+   <td><center><c:out value="${msg.receiverID}"></c:out></center></td>
+   <td><center><c:out value="${msg.text}"></c:out></center></td>
+   <td><center><c:out value="${msg.text}"></c:out></center></td>
    </tr>
 </c:forEach>
 </table>

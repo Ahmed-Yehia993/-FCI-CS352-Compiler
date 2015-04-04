@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
@@ -44,13 +45,14 @@ public class MSGController {
 	@POST
 	@Path("/sendmsg")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String SendMsg(@FormParam("recieverID") String receiverID,@FormParam("text") String text ) {
+	public String SendMsg(@FormParam("recieverID") String receiverID,
+			@FormParam("text") String text) {
 		// System.out.println("Hello controller " + receiverID);
 		String serviceUrl = "http://localhost:8888/rest/sendmessageService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "recieverID=" + receiverID + "&text=" + text;
-			
+
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -99,69 +101,75 @@ public class MSGController {
 		return null;
 
 	}
-    
-//	@GET
-//	@Path("/msgnotification")
-//	@Produces("text/html")
-//	public Response preacceptFriend() {
-//		String frinedid = String.valueOf(User.getCurrentActiveUser().getId());
-//		String serviceUrl = "http://localhost:8888/rest/msgnotification";
-//		try {
-//			URL url = new URL(serviceUrl);
-//			String urlParameters = "&senderID=" + frinedid;
-//			HttpURLConnection connection = (HttpURLConnection) url
-//					.openConnection();
-//			connection.setDoOutput(true);
-//			connection.setDoInput(true);
-//			connection.setInstanceFollowRedirects(false);
-//			connection.setRequestMethod("POST");
-//			connection.setConnectTimeout(60000); // 60 Seconds
-//			connection.setReadTimeout(60000); // 60 Seconds
-//
-//			connection.setRequestProperty("Content-Type",
-//					"application/x-www-form-urlencoded;charset=UTF-8");
-//
-//			OutputStreamWriter writer = new OutputStreamWriter(
-//					connection.getOutputStream());
-//			writer.write(urlParameters);
-//			writer.flush();
-//			String line, retJson = "";
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(
-//					connection.getInputStream()));
-//
-//			while ((line = reader.readLine()) != null) {
-//				retJson += line;
-//			}
-//			writer.close();
-//			reader.close();
-//			Map<String, Vector<Message>> PassedMsg = new HashMap<String, Vector<Message>>();
-//			JSONParser parser = new JSONParser();
-//			JSONArray array = (JSONArray) parser.parse(retJson);
-//			Vector<Message> msg = new Vector<Message>();
-//			for (int i = 0; i < array.size(); i++) {
-//				JSONObject object;
-//				object = (JSONObject) array.get(i); 
-//				msg.add(Message.parseMessageInfo(object.toJSONString()));
-//			}
-//			System.out.println(msg.get(0));
-//			PassedMsg.put("msgnotificationList", msg);
-//			return Response.ok(new Viewable("/jsp/msgnotification", PassedMsg))
-//					.build();
-//		} catch (MalformedURLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		/*
-//		 * UserEntity user = new UserEntity(uname, email, pass);
-//		 * user.saveUser(); return uname;
-//		 */
-//		return null;
-//	}
+
+	@GET
+	@Path("/msgnotification")
+	@Produces("text/html")
+	public Response preacceptFriend() {
+		String frinedid = String.valueOf(User.getCurrentActiveUser().getId());
+		String serviceUrl = "http://localhost:8888/rest/msgnotification";
+		try {
+			URL url = new URL(serviceUrl);
+			String urlParameters = "&senderID=" + frinedid;
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			Map<String, Vector<Message>> PassedMsg = new HashMap<String, Vector<Message>>();
+			JSONParser parser = new JSONParser();
+			JSONArray array = (JSONArray) parser.parse(retJson);
+			Vector<Message> msg = new Vector<Message>();
+			for (int i = 0; i < array.size(); i++) {
+				JSONObject object;
+				object = (JSONObject) array.get(i);
+				msg.add(Message.parseMessageInfo(object.toJSONString()));
+			}
+			
+			int i = 0;
+			for (Iterator iterator = msg.iterator(); iterator.hasNext();) {
+				Message message = (Message) iterator.next();
+				System.out.println(i + " :  " + message.getTimeStamp() + " " + message.getText());
+				i++;
+			}
+			PassedMsg.put("msgnotificationList", msg);
+			return Response.ok(new Viewable("/jsp/msgnotification", PassedMsg))
+					.build();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		 * UserEntity user = new UserEntity(uname, email, pass);
+		 * user.saveUser(); return uname;
+		 */
+		return null;
+	}
 
 }

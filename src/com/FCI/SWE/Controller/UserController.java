@@ -514,7 +514,7 @@ public class UserController  {
 			for (int i = 0; i < array.size(); i++) {
 				JSONObject object;
 				object = (JSONObject) array.get(i);
-
+                
 				users.add(User.parseUserInfo(object.toJSONString()));
 			}
 			// System.out.println(users.get(0));
