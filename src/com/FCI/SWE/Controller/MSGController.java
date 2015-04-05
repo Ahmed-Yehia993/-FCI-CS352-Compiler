@@ -101,11 +101,68 @@ public class MSGController {
 		return null;
 
 	}
+    
+	@POST
+	@Path("/seenmsg")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String acceptFriend(@FormParam("msgID") String msgID) {
+		String serviceUrl = "http://localhost:8888/rest/seenMsgService";
+		try {
+			URL url = new URL(serviceUrl);
+			String urlParameters = "msgID=" + msgID;
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse(retJson);
+			JSONObject object = (JSONObject) obj;
+			if (object.get("Status").equals("Failed"))
+				return "";
+			if (object.get("Status").equals("OK"))
+			    return "seen";
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		 * UserEntity user = new UserEntity(uname, email, pass);
+		 * user.saveUser(); return uname;
+		 */
+		return null;
+
+	}
 
 	@GET
 	@Path("/msgnotification")
 	@Produces("text/html")
-	public Response preacceptFriend() {
+	public Response preseenMsg() {
 		String frinedid = String.valueOf(User.getCurrentActiveUser().getId());
 		String serviceUrl = "http://localhost:8888/rest/msgnotification";
 		try {
@@ -171,5 +228,67 @@ public class MSGController {
 		 */
 		return null;
 	}
+	
+	@POST
+	@Path("/messages")
+	@Produces("text/html")
+	public Response viewMessages(@FormParam("receiverID") String receiverID , @FormParam("group") String group ,
+			@FormParam("single") String single) {
+		String serviceUrl = "http://localhost:8888/rest/ViewMessageService";
+		try {
+			URL url = new URL(serviceUrl);
+			String urlParameters = "&receiverID=" + receiverID +"&group=" + group+"&single=" + single;
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
 
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			Map<String, Vector<Message>> PassedMsg = new HashMap<String, Vector<Message>>();
+			JSONParser parser = new JSONParser();
+			JSONArray array = (JSONArray) parser.parse(retJson);
+			Vector<Message> msg = new Vector<Message>();
+			for (int i = 0; i < array.size(); i++) {
+				JSONObject object;
+				object = (JSONObject) array.get(i);
+				msg.add(Message.parseMessageInfo(object.toJSONString()));
+			} 
+			PassedMsg.put("messagesList", msg);
+			return Response.ok(new Viewable("/jsp/messages", PassedMsg))
+					.build();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		 * UserEntity user = new UserEntity(uname, email, pass);
+		 * user.saveUser(); return uname;
+		 */
+		return null;
+	}	
 }

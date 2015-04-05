@@ -206,15 +206,7 @@ public class UserController  {
 
 			map.put("id", user.getIdString());
 			
-			// return response.sendRedirect("page.jsp");
-			//ResponseBuilder x = Response.ok(new Viewable("/jsp/home", map));
-			//x.status((int) user.getId());
-		//	Response.status((int) user.getId());
 			ResponseBuilder x =Response.ok( new Viewable("/jsp/home", map));
-			 
-
-			
-
 			 return x.build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block

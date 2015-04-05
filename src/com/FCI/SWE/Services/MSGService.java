@@ -1,6 +1,5 @@
 package com.FCI.SWE.Services;
 
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,9 +37,11 @@ public class MSGService {
 			@FormParam("recieverID") String recieverID,
 			@FormParam("text") String text) {
 		JSONObject object = new JSONObject();
+		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
-		String timestamp = dateFormat.format(cal.getTime());
+		String timestamp = dateFormat.format(cal.getTime()).toString();
+		
 		Message m = new Message(String.valueOf(User.getCurrentActiveUser()
 				.getId()), recieverID,recieverID, timestamp, text);
 		if (m.sendMessage())
@@ -50,25 +51,69 @@ public class MSGService {
 
 		return object.toString();
 	}
-
+    
 	@POST
-	@Path("/msgnotification")
-	public String msgNotificationService() {
-		//System.out.println("ssss");
-		Vector<Message> msg = Message.getMessageNotification(String.valueOf(User
-				.getCurrentActiveUser().getId()));
+	@Path("/seenMsgService")
+	public String seenMsgService(@FormParam("msgID") String msgID) {
+		JSONObject object = new JSONObject();
+		if (Message.seenMsg(msgID,User
+				.getCurrentActiveUser().getId()))
+			object.put("Status", "OK");
+		else
+			object.put("Status", "Failed");
 
-		//System.out.println(msg.size());
+		return object.toString();
+	}
+	
+	@POST
+	@Path("/ViewMessageService")
+	public String ViewMessageService(@FormParam("receiverID") String receiverID , @FormParam("group") String group ,
+			@FormParam("single") String single) {
+		//System.out.println("radio : " + single + " : g = "+ group);
+		Vector<Message> msg;
+		if(group.equals("null"))
+		{
+			msg = Message.ViewMessagesBysender(String.valueOf(User
+					.getCurrentActiveUser().getId()),receiverID);
+		}else{
+			msg = Message.ViewMessagesByGroup(String.valueOf(User
+					.getCurrentActiveUser().getId()),receiverID);
+		}
+		
 		JSONArray returnedJson = new JSONArray();
 		for (Message m : msg) {
 			JSONObject object = new JSONObject();
 			object.put("text", m.getText());
 			object.put("groupID", m.getGroupID());
 			object.put("senderID", m.getSenderID());
-			object.put("id", m.getid());
-			object.put("timestamp", m.getTimeStamp().toString());
+			object.put("msgID", m.getid());
+			object.put("times", m.getTimeStamp());
 			object.put("receiverID", m.getReceiverID());
-			System.out.println("t : " + m.getTimeStamp());
+			object.put("seen", "1");
+			//System.out.println("t : " + m.getTimeStamp());
+			returnedJson.add(object);
+		}
+
+		return returnedJson.toJSONString();
+
+	}
+	@POST
+	@Path("/msgnotification")
+	public String msgNotificationService() {
+		Vector<Message> msg = Message.getMessageNotification(String.valueOf(User
+				.getCurrentActiveUser().getId()));
+
+		JSONArray returnedJson = new JSONArray();
+		for (Message m : msg) {
+			JSONObject object = new JSONObject();
+			object.put("text", m.getText());
+			object.put("groupID", m.getGroupID());
+			object.put("senderID", m.getSenderID());
+			object.put("msgID", m.getid());
+			object.put("times", m.getTimeStamp());
+			object.put("receiverID", m.getReceiverID());
+			object.put("seen", m.getSeen());
+			//System.out.println("t : " + m.getTimeStamp());
 			returnedJson.add(object);
 		}
 

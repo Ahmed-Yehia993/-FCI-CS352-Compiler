@@ -108,7 +108,6 @@ public class Service extends HttpServlet {
 	@POST
 	@Path("/LogoutService")
 	public String LogoutService() {
-		System.out.println("HERE logout 2");
 		JSONObject object = new JSONObject();
 		User.logout();
 		object.put("Status", "OK");
