@@ -264,7 +264,7 @@ public class UserController  {
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
-			return Response.ok(new Viewable("/jsp/entryPoint")).build();
+			return Response.ok(new Viewable("/jsp/home")).build();
 			// connection.disconnect();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
