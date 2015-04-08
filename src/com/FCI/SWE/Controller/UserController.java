@@ -11,18 +11,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.mail.Session;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.apache.geronimo.mail.util.SessionUtil;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -30,8 +29,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.FCI.SWE.Models.User;
-import com.google.appengine.api.capabilities.CapabilitiesPb.CapabilityConfig.Status;
-import com.google.appengine.labs.repackaged.org.json.JSONException;
 
 /**
  * This class contains REST services, also contains action function for web
@@ -160,11 +157,12 @@ public class UserController  {
 	 * @param pass
 	 *            provided user password
 	 * @return Home page view
-	 */
+	 **/
+	
 	@POST
 	@Path("/home")
 	@Produces("text/html")
-	public Response home(@FormParam("uname") String uname,
+	public Response home(@Context HttpServletRequest req , @FormParam("uname") String uname,
 			@FormParam("password") String pass) {
 		String serviceUrl = "http://localhost:8888/rest/LoginService";
 		try {
@@ -203,9 +201,14 @@ public class UserController  {
 			User user = User.getUser(object.toJSONString());
 			map.put("name", user.getName());
 			map.put("email", user.getEmail());
-
 			map.put("id", user.getIdString());
 			
+			req.getSession(true).setAttribute("current_user_name",user.getName());
+			req.getSession(true).setAttribute("current_user_email", user.getEmail());
+			req.getSession(true).setAttribute("current_user_id", user.getIdString());
+			
+			req.getSession(true).setAttribute("s", map);
+			//System.out.println(req.getSession(true).getAttribute("current_user_id"));
 			ResponseBuilder x =Response.ok( new Viewable("/jsp/home", map));
 			 return x.build();
 		} catch (MalformedURLException e) {
@@ -223,15 +226,18 @@ public class UserController  {
 		 * user.saveUser(); return uname;
 		 */
 		return null;
-
 	}
 
 	@GET
 	@Path("/logout")
 	@Produces("text/html")
-	public Response logout() throws ParseException {
-		System.out.println("HERE logout 1");
-		String urlParameters = "";
+	public Response logout(@Context HttpServletRequest req) throws ParseException {
+		String urlParameters = ""; 
+		req.getSession(false).removeAttribute("current_user_name");
+		req.getSession(false).removeAttribute("current_user_email");
+		req.getSession(false).removeAttribute("current_user_id");
+		
+		String current_user_id = (String) req.getSession().getAttribute("current_user_id");
 		String serviceUrl = "http://localhost:8888/rest/LogoutService";
 		try {
 			URL url = new URL(serviceUrl);
@@ -259,8 +265,7 @@ public class UserController  {
 				retJson += line;
 			}
 			writer.close();
-			reader.close();
-			System.out.println(retJson);
+			reader.close(); 
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
@@ -277,18 +282,15 @@ public class UserController  {
 
 	}
 
-	@GET
+	@POST
 	@Path("/preaddfriend")
 	@Produces("text/html")
-	public Response preaddFriend() {
-		// ,@FormParam("receiverID")
-		// String
-		String frinedid = String.valueOf(User.getCurrentActiveUser().getId());
+	public Response preaddFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
 		String serviceUrl = "http://localhost:8888/rest/preaddFriendService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "&senderID=" + frinedid;// + " &receiverID="+
-															// myid;
+			String urlParameters = "&current_user_id=" + current_user_id;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -316,11 +318,7 @@ public class UserController  {
 			reader.close();
 
 			Map<String, Vector<User>> PassedUsers = new HashMap<String, Vector<User>>();
-			JSONParser parser = new JSONParser();
-			// System.out.println(retJson);
-			// Object obj = parser.parse(retJson);
-			// JSONArray array = new JSONArray();
-			// array.add(obj);
+			JSONParser parser = new JSONParser(); 
 			JSONArray array = (JSONArray) parser.parse(retJson);
 			Vector<User> users = new Vector<User>();
 			for (int i = 0; i < array.size(); i++) {
@@ -352,12 +350,12 @@ public class UserController  {
 	@POST
 	@Path("/unfriend")
 	@Produces("text/html")
-	public String unFriend(@FormParam("recieverID") String receiverID) {
-		// System.out.println("Hello controller " + receiverID);
+	public String unFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,@FormParam("recieverID") String receiverID) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id");
 		String serviceUrl = "http://localhost:8888/rest/unFriendService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "recieverID=" + receiverID;
+			String urlParameters = "recieverID=" + receiverID + "&current_user_id=" + current_user_id;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -410,12 +408,12 @@ public class UserController  {
 	@POST
 	@Path("/addfriend")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String addFriend(@FormParam("recieverID") String receiverID) {
-		// System.out.println("Hello controller " + receiverID);
+	public String addFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,@FormParam("recieverID") String receiverID) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id");
 		String serviceUrl = "http://localhost:8888/rest/addFriendService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "recieverID=" + receiverID;
+			String urlParameters = "recieverID=" + receiverID + "&current_user_id=" + current_user_id;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -465,15 +463,15 @@ public class UserController  {
 
 	}
 
-	@GET
+	@POST
 	@Path("/preacceptfriend")
 	@Produces("text/html")
-	public Response preacceptFriend() {
-		String frinedid = String.valueOf(User.getCurrentActiveUser().getId());
+	public Response preacceptFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id");
 		String serviceUrl = "http://localhost:8888/rest/preacceptFriendService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "&senderID=" + frinedid;
+			String urlParameters = "&current_user_id=" + current_user_id;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -533,12 +531,12 @@ public class UserController  {
 	@POST
 	@Path("/acceptfriend")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String acceptFriend(@FormParam("recieverID") String receiverID) {
-		// System.out.println("Hello controller " + receiverID);
+	public String acceptFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,@FormParam("recieverID") String receiverID) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id");
 		String serviceUrl = "http://localhost:8888/rest/acceptFriendService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "recieverID=" + receiverID;
+			String urlParameters = "recieverID=" + receiverID + "&current_user_id=" + current_user_id;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -588,19 +586,15 @@ public class UserController  {
 
 	}
 
-	@GET
+	@POST
 	@Path("/showMyfriends")
 	@Produces("text/html")
-	public Response showMyfriends() {
-		// ,@FormParam("receiverID")
-		// String
-		String frinedid = String.valueOf(User.getCurrentActiveUser().getId()); // myid
-		// @FormParam("senderID") String frinedid
+	public Response showMyfriends(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id");
 		String serviceUrl = "http://localhost:8888/rest/myFriendsService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "&senderID=" + frinedid;// + " &receiverID="+
-															// myid;
+			String urlParameters = "&current_user_id=" + current_user_id; 
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);

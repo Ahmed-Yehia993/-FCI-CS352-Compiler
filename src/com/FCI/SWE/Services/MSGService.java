@@ -18,32 +18,22 @@ import com.FCI.SWE.Models.FriendShip;
 import com.FCI.SWE.Models.Message;
 import com.FCI.SWE.Models.User;
 
-/**
- * THIS CLASS CONTAINS REST SERVICES, ALSO CONTAINS ACTION FUNCTION FOR WEB
- * APPLICATION
- * 
- * @AUTHOR AHMED YEHIA
- * @VERSION 1.0
- * @SINCE 2014-02-12
- *
- */
 @Path("/")
 @Produces(MediaType.TEXT_PLAIN)
 public class MSGService {
 
 	@POST
 	@Path("/sendmessageService")
-	public String sendMessageService(
+	public String sendMessageService(@FormParam("current_user_id") String CurrentUserID,
 			@FormParam("recieverID") String recieverID,
 			@FormParam("text") String text) {
-		JSONObject object = new JSONObject();
-		
+		JSONObject object = new JSONObject(); 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String timestamp = dateFormat.format(cal.getTime()).toString();
 		
-		Message m = new Message(String.valueOf(User.getCurrentActiveUser()
-				.getId()), recieverID,recieverID, timestamp, text);
+		Message m = new Message(CurrentUserID, recieverID,recieverID, timestamp, text);
+		//System.out.println("current_user_id = " + CurrentUserID);
 		if (m.sendMessage())
 			object.put("Status", "OK");
 		else
@@ -54,10 +44,9 @@ public class MSGService {
     
 	@POST
 	@Path("/seenMsgService")
-	public String seenMsgService(@FormParam("msgID") String msgID) {
+	public String seenMsgService(@FormParam("current_user_id") String CurrentUserID , @FormParam("msgID") String msgID) {
 		JSONObject object = new JSONObject();
-		if (Message.seenMsg(msgID,User
-				.getCurrentActiveUser().getId()))
+		if (Message.seenMsg(msgID,Long.parseLong(CurrentUserID)))
 			object.put("Status", "OK");
 		else
 			object.put("Status", "Failed");
@@ -67,17 +56,15 @@ public class MSGService {
 	
 	@POST
 	@Path("/ViewMessageService")
-	public String ViewMessageService(@FormParam("receiverID") String receiverID , @FormParam("group") String group ,
+	public String ViewMessageService(@FormParam("current_user_id") String CurrentUserID ,@FormParam("receiverID") String receiverID , @FormParam("group") String group ,
 			@FormParam("single") String single) {
 		//System.out.println("radio : " + single + " : g = "+ group);
 		Vector<Message> msg;
 		if(group.equals("null"))
 		{
-			msg = Message.ViewMessagesBysender(String.valueOf(User
-					.getCurrentActiveUser().getId()),receiverID);
+			msg = Message.ViewMessagesBysender(CurrentUserID,receiverID);
 		}else{
-			msg = Message.ViewMessagesByGroup(String.valueOf(User
-					.getCurrentActiveUser().getId()),receiverID);
+			msg = Message.ViewMessagesByGroup(CurrentUserID,receiverID);
 		}
 		
 		JSONArray returnedJson = new JSONArray();
@@ -97,11 +84,11 @@ public class MSGService {
 		return returnedJson.toJSONString();
 
 	}
+	
 	@POST
 	@Path("/msgnotification")
-	public String msgNotificationService() {
-		Vector<Message> msg = Message.getMessageNotification(String.valueOf(User
-				.getCurrentActiveUser().getId()));
+	public String msgNotificationService(@FormParam("current_user_id") String CurrentUserID) {
+		Vector<Message> msg = Message.getMessageNotification(CurrentUserID);
 
 		JSONArray returnedJson = new JSONArray();
 		for (Message m : msg) {

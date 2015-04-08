@@ -15,12 +15,15 @@ import com.google.appengine.api.datastore.Query;
 public class FriendShip {
 
 	public static boolean sendRequest(String senderID, String receiverID) {
+		
+		if(senderID.equals(receiverID)) return false;
+		
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("notification");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
-
+        
 		if (list.size() != 0) {
 			Entity request = new Entity("notification", list
 					.get(list.size() - 1).getKey().getId() + 1);
@@ -41,6 +44,8 @@ public class FriendShip {
 
 	}
 	public static boolean unFriendRequest(String senderID, String receiverID) {
+		if(senderID.equals(receiverID)) return false;
+		
 		long ID1 = Long.parseLong(senderID);
 		long ID2 = Long.parseLong(receiverID);
 		
@@ -65,6 +70,8 @@ public class FriendShip {
 
 	}
 	public static boolean acceptFriendRequest(String senderID, String receiverID) {
+		if(senderID.equals(receiverID)) return false;
+		
 		long ID1 = Long.parseLong(senderID);
 		long ID2 = Long.parseLong(receiverID);
 		DatastoreService datastore = DatastoreServiceFactory

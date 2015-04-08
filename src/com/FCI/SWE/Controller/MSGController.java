@@ -12,11 +12,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -29,15 +31,6 @@ import org.json.simple.parser.ParseException;
 import com.FCI.SWE.Models.Message;
 import com.FCI.SWE.Models.User;
 
-/**
- * This class contains REST services, also contains action function for web
- * application
- * 
- * @author Ahmed w ibrahim w fo24
- * @version 1.0
- * @since 2014-02-12
- *
- */
 @Path("/")
 @Produces("text/html")
 public class MSGController {
@@ -45,13 +38,13 @@ public class MSGController {
 	@POST
 	@Path("/sendmsg")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String SendMsg(@FormParam("recieverID") String receiverID,
+	public String SendMsg(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id , @FormParam("recieverID") String receiverID,
 			@FormParam("text") String text) {
-		// System.out.println("Hello controller " + receiverID);
+		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
 		String serviceUrl = "http://localhost:8888/rest/sendmessageService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "recieverID=" + receiverID + "&text=" + text;
+			String urlParameters = "recieverID=" + receiverID + "&text=" + text + "&current_user_id=" + current_user_id; 
 
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
@@ -105,11 +98,12 @@ public class MSGController {
 	@POST
 	@Path("/seenmsg")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String acceptFriend(@FormParam("msgID") String msgID) {
+	public String acceptFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id , @FormParam("msgID") String msgID) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
 		String serviceUrl = "http://localhost:8888/rest/seenMsgService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "msgID=" + msgID;
+			String urlParameters = "msgID=" + msgID + "&current_user_id=" + current_user_id;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -159,15 +153,15 @@ public class MSGController {
 
 	}
 
-	@GET
+	@POST
 	@Path("/msgnotification")
 	@Produces("text/html")
-	public Response preseenMsg() {
-		String frinedid = String.valueOf(User.getCurrentActiveUser().getId());
+	public Response preseenMsg(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
 		String serviceUrl = "http://localhost:8888/rest/msgnotification";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "&senderID=" + frinedid;
+			String urlParameters = "&current_user_id=" + current_user_id;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -232,12 +226,13 @@ public class MSGController {
 	@POST
 	@Path("/messages")
 	@Produces("text/html")
-	public Response viewMessages(@FormParam("receiverID") String receiverID , @FormParam("group") String group ,
+	public Response viewMessages(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id,@FormParam("receiverID") String receiverID , @FormParam("group") String group ,
 			@FormParam("single") String single) {
+		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
 		String serviceUrl = "http://localhost:8888/rest/ViewMessageService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "&receiverID=" + receiverID +"&group=" + group+"&single=" + single;
+			String urlParameters = "&receiverID=" + receiverID +"&group=" + group+"&single=" + single + "&current_user_id=" + current_user_id;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);

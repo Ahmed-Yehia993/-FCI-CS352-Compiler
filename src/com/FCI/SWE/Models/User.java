@@ -115,6 +115,7 @@ public class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		return null;
 
 	}
@@ -171,7 +172,21 @@ public class User {
 
 		return null;
 	}
-
+    
+	public static String getUserNameByID(String id) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Query gaeQuery = new Query("users");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getKey().getId() == Long.parseLong(id)) {
+				String returnedUser = entity.getProperty("name").toString();
+				return returnedUser;
+			}
+		}
+		return null;
+	}
+	
 	public static User getUser(long id) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();

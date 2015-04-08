@@ -1,11 +1,9 @@
 package com.FCI.SWE.Models;
 
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
-
-import javax.naming.ldap.HasControls;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -189,23 +187,94 @@ public class Message {
 		}
 
 	}
-
-	public Boolean sendMessage() {
+   
+	public int getGroupIDFromDB(String s , String r){
+		
+		String ides1[] = r.split("/");
+		String [] ides11 = new String[ides1.length+1]; 
+		for (int i = 0; i < ides1.length; i++) {
+			 ides11[i] = ides1[i];
+		}
+		ides11[ides1.length] = s;
+		Arrays.sort(ides11); 
+		
+//		System.out.println("1 >>>>>>>>>>>>");
+//		for (int i = 0; i < ides11.length; i++) System.out.println(ides11[i] + " ");
+//		System.out.println();
+			
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("messages");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
-
+		
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("receiverID").toString()
+					.equals(r)
+					&& entity.getProperty("senderID")
+							.toString().equals(s)) {
+				return Integer.parseInt(entity.getProperty(
+						"GroupID").toString());
+			}
+		}
+		for (Entity entity : pq.asIterable()) {
+			r = entity.getProperty("receiverID").toString();
+			s = entity.getProperty("senderID").toString();
+			
+			String ides2[] = r.split("/");
+			String []ides22 = new String[ides2.length+1]; 
+			
+			if(ides2.length+1 != ides11.length) continue;
+			
+			for (int i = 0; i < ides2.length; i++) {
+				 ides22[i] = ides2[i];
+			}
+			ides22[ides2.length] = s;
+		    
+			Arrays.sort(ides22);
+			
+			int cnt = 0;
+			for (int i = 0; i < ides22.length; i++) {
+				 if(ides11[i].equals(ides22[i])) cnt++;
+			}
+			
+//			System.out.println("2 >>>>>>>>>>>>");
+//			for (int i = 0; i < ides22.length; i++) System.out.print(ides22[i] + " ");
+//			System.out.println();
+//			
+//			System.out.println("count = " + cnt);
+			if(cnt == ides11.length) 
+			     return Integer.parseInt(entity.getProperty(
+						"GroupID").toString());
+			
+		}
+		return -1;
+	}
+	public Boolean sendMessage() {
+		
+		String[] ids = receiverID.split("/");
+		if(hasContainID(ids, this.senderID)) return false;
+		
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Query gaeQuery = new Query("messages");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
+        
+		
 		long GroupID, recordID;
+		
 		if (list.size() == 0) {
 			GroupID = 1;
 			recordID = 1;
 		} else {
-			GroupID = (Long) list.get(list.size() - 1).getKey().getId() + 1;
+			System.out.println(getGroupIDFromDB(this.senderID, this.receiverID) + " " + this.senderID + " " + this.receiverID);
+			if(getGroupIDFromDB(this.senderID, this.receiverID) == -1 )
+				GroupID = (Long) list.get(list.size() - 1).getKey().getId() + 1;
+			else
+				GroupID = getGroupIDFromDB(this.senderID, this.receiverID);
 			recordID = list.get(list.size() - 1).getKey().getId() + 1;
 		}
-		String[] ids = receiverID.split("/");
 
 		// for (int i = 0; i < ids.length; i++) {
 		// Query gaeQuery = new Query("messages");
@@ -302,6 +371,9 @@ public class Message {
 								"timestamp").toString()), entity.getProperty("text")
 						.toString());
 				returnedMsg.setId(entity.getKey().getId());
+				returnedMsg.setSender(User.getUserNameByID(entity.getProperty("senderID").toString()));
+				if(!entity.getProperty("receiverID").toString().contains("/"))
+				      returnedMsg.setReceiver(User.getUserNameByID(entity.getProperty("receiverID").toString()));
 				return returnedMsg;
 			}
 		}
@@ -334,18 +406,22 @@ public class Message {
 		return temp;
 	}
 	public static boolean hasContainID(String ids[] , String id){
-		for (int i = 0; i < ids.length; i++) {
+		for (int i = 0; i < ids.length; i++) 
 			if(ids[i].equals(id)) return true;
-		}
+		
 		return false;	
 	}
 	public static Vector<Message> ViewMessagesBysender(String myid , String receiverID) {
+		
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		
 		Query gaeQuery = new Query("messages");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		Vector<Message> temp = new Vector<Message>(); 
+		
+		if(myid.equals(receiverID)) return temp;
+		
 		for (Entity entity : pq.asIterable()) {
 			if (entity.getProperty("senderID").toString().equals(myid) &&
 					entity.getProperty("receiverID").toString().equals(receiverID)) {
@@ -376,7 +452,7 @@ public class Message {
 			if (entity.getProperty("GroupID").toString().equals(receiverID)) {
 				String[] ids = entity.getProperty("receiverID").toString().split("/");
 				
-				if (entity.getProperty("senderID").toString().equals(receiverID)||
+				if (entity.getProperty("senderID").toString().equals(myid)||
 						hasContainID(ids, myid)) {
 					Message msg = new Message();
 					msg = Message.getMsgByID(entity.getKey().getId());

@@ -20,15 +20,6 @@ import org.json.simple.JSONObject;
 import com.FCI.SWE.Models.FriendShip;
 import com.FCI.SWE.Models.User;
 
-/**
- * This class contains REST services, also contains action function for web
- * application
- * 
- * @author Mohamed Samir
- * @version 1.0
- * @since 2014-02-12
- *
- */
 @Path("/")
 @Produces(MediaType.TEXT_PLAIN)
 public class Service extends HttpServlet {
@@ -93,12 +84,7 @@ public class Service extends HttpServlet {
 	 object.put("name", user.getName());
 	 object.put("email", user.getEmail());
 	 object.put("password", user.getPass());
-	 object.put("id", user.getId());
-	 
-	 
-	// HttpSession session = request.getSession(true);	    
-    // session.setAttribute("currentSessionUser",user); 
-  //   response.sendRedirect("home.jsp"); //logged-in page  
+	 object.put("id", user.getId()); 
 	 }
 	
 	 return object.toString();
@@ -116,12 +102,9 @@ public class Service extends HttpServlet {
 
 	@POST
 	@Path("/addFriendService")
-	public String addFriendService(@FormParam("recieverID") String recieverID) {
+	public String addFriendService(@FormParam("current_user_id") String CurrentUserID ,@FormParam("recieverID") String recieverID) {
 		JSONObject object = new JSONObject();
-		if (FriendShip
-				.sendRequest(
-						String.valueOf(User.getCurrentActiveUser().getId()),
-						recieverID))
+		if (FriendShip.sendRequest(CurrentUserID,recieverID))
 			object.put("Status", "OK");
 		else
 			object.put("Status", "Failed");
@@ -131,12 +114,9 @@ public class Service extends HttpServlet {
 
 	@POST
 	@Path("/unFriendService")
-	public String unFriendService(@FormParam("recieverID") String recieverID) {
+	public String unFriendService(@FormParam("current_user_id") String CurrentUserID , @FormParam("recieverID") String recieverID) {
 		JSONObject object = new JSONObject();
-		if (FriendShip
-				.unFriendRequest(
-						String.valueOf(User.getCurrentActiveUser().getId()),
-						recieverID))
+		if (FriendShip.unFriendRequest(CurrentUserID,recieverID))
 			object.put("Status", "OK");
 		else
 			object.put("Status", "Failed");
@@ -146,9 +126,8 @@ public class Service extends HttpServlet {
 
 	@POST
 	@Path("/preaddFriendService")
-	public String preaddFriendService() {
-		Vector<User> users = FriendShip.getUsers(String.valueOf(User
-				.getCurrentActiveUser().getId()));
+	public String preaddFriendService(@FormParam("current_user_id") String CurrentUserID) {
+		Vector<User> users = FriendShip.getUsers(CurrentUserID);
 
 		JSONArray returnedJson = new JSONArray();
 		for (User user : users) {
@@ -165,9 +144,9 @@ public class Service extends HttpServlet {
 
 	@POST
 	@Path("/preacceptFriendService")
-	public String preacceptFriendService() {
-		Vector<User> users = FriendShip.getNotifications(String.valueOf(User
-				.getCurrentActiveUser().getId()));
+	public String preacceptFriendService(@FormParam("current_user_id") String CurrentUserID) {
+		System.out.println(CurrentUserID + " ---ok");
+		Vector<User> users = FriendShip.getNotifications(CurrentUserID);
 		JSONArray returnedJson = new JSONArray();
 		for (User user : users) {
 			JSONObject object = new JSONObject();
@@ -183,12 +162,9 @@ public class Service extends HttpServlet {
 
 	@POST
 	@Path("/acceptFriendService")
-	public String acceptFriendService(@FormParam("recieverID") String recieverID) {
+	public String acceptFriendService(@FormParam("current_user_id") String CurrentUserID , @FormParam("recieverID") String recieverID) {
 		JSONObject object = new JSONObject();
-		if (FriendShip
-				.acceptFriendRequest(
-						String.valueOf(User.getCurrentActiveUser().getId()),
-						recieverID))
+		if (FriendShip.acceptFriendRequest(CurrentUserID,recieverID))
 			object.put("Status", "OK");
 		else
 			object.put("Status", "Failed");
@@ -198,10 +174,9 @@ public class Service extends HttpServlet {
 
 	@POST
 	@Path("/myFriendsService")
-	public String myFriendsService() {
-		Vector<User> users = FriendShip.getMyFriends(String.valueOf(User
-				.getCurrentActiveUser().getId()));
-
+	public String myFriendsService(@FormParam("current_user_id") String CurrentUserID) {
+		Vector<User> users = FriendShip.getMyFriends(CurrentUserID);
+		System.out.println(CurrentUserID + " ---ok");
 		JSONArray returnedJson = new JSONArray();
 		for (User user : users) {
 			JSONObject object = new JSONObject();
