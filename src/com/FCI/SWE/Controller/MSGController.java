@@ -41,7 +41,7 @@ public class MSGController {
 	public String SendMsg(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id , @FormParam("recieverID") String receiverID,
 			@FormParam("text") String text) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
-		String serviceUrl = "http://localhost:8888/rest/sendmessageService";
+		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/sendmessageService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "recieverID=" + receiverID + "&text=" + text + "&current_user_id=" + current_user_id; 
@@ -100,7 +100,7 @@ public class MSGController {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String acceptFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id , @FormParam("msgID") String msgID) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
-		String serviceUrl = "http://localhost:8888/rest/seenMsgService";
+		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/seenMsgService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "msgID=" + msgID + "&current_user_id=" + current_user_id;
@@ -158,7 +158,7 @@ public class MSGController {
 	@Produces("text/html")
 	public Response preseenMsg(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
-		String serviceUrl = "http://localhost:8888/rest/msgnotification";
+		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/msgnotification";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "&current_user_id=" + current_user_id;
@@ -229,7 +229,7 @@ public class MSGController {
 	public Response viewMessages(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id,@FormParam("receiverID") String receiverID , @FormParam("group") String group ,
 			@FormParam("single") String single) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
-		String serviceUrl = "http://localhost:8888/rest/ViewMessageService";
+		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/ViewMessageService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "&receiverID=" + receiverID +"&group=" + group+"&single=" + single + "&current_user_id=" + current_user_id;

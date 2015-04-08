@@ -9,15 +9,38 @@
 <title>Insert title here</title>
 </head>
 <body>
+<style type="text/css">
+ul {list-style-type: none;margin: 0;margin-left: 33px;padding: 0;overflow: hidden;}
+li {float: left;}
+button, visited {display: block;width: 250px;font-weight: bold;color: #FFFFFF;background-color: #190707;text-align: center;padding: 10px;text-decoration: none;text-transform: uppercase;}
+button:hover, button:active { background-color: rgb(201, 48, 44);}
+</style>
+	<ul>
+		<li><form action="/social/preaddfriend" method="post">
+				<button>add friend</button>
+			</form></li>
+		<li><form action="/social/preacceptfriend" method="post">
+				<button>Friends notification</button>
+			</form></li>
+		<li><form action="/social/msgnotification" method="post">
+				<button>msg notification</button>
+			</form></li>
+		<li><form action="/social/showMyfriends" method="post">
+				<button>Show My Friends</button>
+			</form></li>
+		<li><form action="/social/logout" method="get">
+				<button>sign out</button>
+			</form></li>
+	</ul>
 	<div align="center">
 		<h1>Enter ID of the group or sender to seen the history of msgs</h1>
 		<form action="/social/messages" method="post">
-			<input type="submit" value="view"> <input type="text" name="receiverID" />
+			<input type="submit" value="view"> <input type="text"
+				name="receiverID" />
 			<div style="display: inline-block;">
 				<input id="single" type="checkbox" name="single" value="single">
-				<label for="option">single</label> <input id="group"
-					type="checkbox" name="group" value="group"> <label
-					for="option">group</label>
+				<label for="option">single</label> <input id="group" type="checkbox"
+					name="group" value="group"> <label for="option">group</label>
 			</div>
 		</form>
 		<br>

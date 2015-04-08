@@ -16,13 +16,14 @@
 <title>HOME</title>
 <!-- Bootstrap -->
 <link href="bootstrap.min.css" rel="stylesheet" >
-
 </head>
 <body>
+
 <style type="text/css">
 ul {
     list-style-type: none;
     margin: 0;
+    margin-left: 33;
     padding: 0;
     overflow: hidden;
 }
@@ -31,7 +32,7 @@ li {
     float: left;
 }
 
-a:link, a:visited {
+button,visited {
     display: block;
     width: 250px;
     font-weight: bold;
@@ -43,7 +44,7 @@ a:link, a:visited {
     text-transform: uppercase;
 }
 
-a:hover, a:active {
+button:hover, button:active {
     background-color: rgb(201,48,44);
 }
 
@@ -51,14 +52,15 @@ a:hover, a:active {
 </style>
 
 <ul>
-  <li><a href="/social/preaddfriend">add friend</a></li>
-  <li><a href="/social/preacceptfriend">Friends notification</a></li>
-  <li><a href="/social/msgnotification">msg notification</a></li>
-  <li><a href="/social/showMyfriends">Show My Friends</a></li>
-  <li><a href="/social/logout" >sign out</a></li>
-  
+  <li><form action="/social/preaddfriend" method="post"><button>add friend</button></form></li>
+  <li><form action="/social/preacceptfriend" method="post"><button>Friends notification</button></form></li>
+  <li><form action="/social/msgnotification" method="post"><button>msg notification</button></form></li>
+  <li><form action="/social/showMyfriends" method="post"><button>Show My Friends</button></form></li>
+  <li><form action="/social/logout" method="get"><button>sign out</button></form></li> 
 </ul>
-	<div align="left" >
+    
+    <br><br><br>
+	<div align="center" >
 	<img alt="user" src="/jsp/images.jpg">
 
 	<h3 name="username">${it.name}</h3>
@@ -69,23 +71,23 @@ a:hover, a:active {
 	
 <!-- 	<div align="center" -->
 <!-- 		style="width: 700px; margin-left: 300px; margin-right: 100px;"> -->
-<!-- 		<form action="/social/logout" method="get"> -->
+<!-- 		<form action="/social/logout" method="post"> -->
 <!-- 			<input type="submit" value="sign out"> -->
 <!-- 		</form> -->
 <!-- 		<br> -->
-<!-- 		<form action="/social/preaddfriend" method="get"> -->
+<!-- 		<form action="/social/preaddfriend" method="post"> -->
 <!-- 			<input type="submit" value="add friend"> -->
 <!-- 		</form> -->
 <!-- 		<br> -->
-<!-- 		<form action="/social/preacceptfriend" method="get"> -->
+<!-- 		<form action="/social/preacceptfriend" method="post"> -->
 <!-- 			<input type="submit" value="Friends notification"> -->
 <!-- 		</form> -->
 <!-- 		<br> -->
-<!-- 		<form action="/social/msgnotification" method="get"> -->
+<!-- 		<form action="/social/msgnotification" method="post"> -->
 <!-- 			<input type="submit" value="msg notification"> -->
 <!-- 		</form> -->
 <!-- 		<br> -->
-<!-- 		<form action="/social/showMyfriends" method="get"> -->
+<!-- 		<form action="/social/showMyfriends" method="post"> -->
 <!-- 			<input type="submit" value="Show My Friends"> -->
 <!-- 		</form> -->
 <!-- 	</div> -->
