@@ -97,7 +97,7 @@ public class UserController  {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String response(@FormParam("uname") String uname,
 			@FormParam("email") String email, @FormParam("password") String pass) {
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/RegistrationService";
+		String serviceUrl = "http://localhost:8888/rest/RegistrationService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "uname=" + uname + "&email=" + email
@@ -164,7 +164,7 @@ public class UserController  {
 	@Produces("text/html")
 	public Response home(@Context HttpServletRequest req , @FormParam("uname") String uname,
 			@FormParam("password") String pass) {
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/LoginService";
+		String serviceUrl = "http://localhost:8888/rest/LoginService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "uname=" + uname + "&password=" + pass;
@@ -238,7 +238,7 @@ public class UserController  {
 		req.getSession(false).removeAttribute("current_user_id");
 		
 		String current_user_id = (String) req.getSession().getAttribute("current_user_id");
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/LogoutService";
+		String serviceUrl = "http://localhost:8888/rest/LogoutService";
 		try {
 			URL url = new URL(serviceUrl);
 
@@ -287,7 +287,7 @@ public class UserController  {
 	@Produces("text/html")
 	public Response preaddFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/preaddFriendService";
+		String serviceUrl = "http://localhost:8888/rest/preaddFriendService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "&current_user_id=" + current_user_id;
@@ -352,7 +352,7 @@ public class UserController  {
 	@Produces("text/html")
 	public String unFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,@FormParam("recieverID") String receiverID) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id");
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/unFriendService";
+		String serviceUrl = "http://localhost:8888/rest/unFriendService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "recieverID=" + receiverID + "&current_user_id=" + current_user_id;
@@ -410,7 +410,7 @@ public class UserController  {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String addFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,@FormParam("recieverID") String receiverID) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id");
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/addFriendService";
+		String serviceUrl = "http://localhost:8888/rest/addFriendService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "recieverID=" + receiverID + "&current_user_id=" + current_user_id;
@@ -468,7 +468,7 @@ public class UserController  {
 	@Produces("text/html")
 	public Response preacceptFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id");
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/preacceptFriendService";
+		String serviceUrl = "http://localhost:8888/rest/preacceptFriendService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "&current_user_id=" + current_user_id;
@@ -533,7 +533,7 @@ public class UserController  {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String acceptFriend(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,@FormParam("recieverID") String receiverID) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id");
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/acceptFriendService";
+		String serviceUrl = "http://localhost:8888/rest/acceptFriendService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "recieverID=" + receiverID + "&current_user_id=" + current_user_id;
@@ -591,7 +591,7 @@ public class UserController  {
 	@Produces("text/html")
 	public Response showMyfriends(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id) {
 		current_user_id = (String) req.getSession().getAttribute("current_user_id");
-		String serviceUrl = "http://3-dot-app-swe-project.appspot.com/rest/myFriendsService";
+		String serviceUrl = "http://localhost:8888/rest/myFriendsService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "&current_user_id=" + current_user_id; 
