@@ -9,11 +9,34 @@
 <title>Insert title here</title>
 </head>
 <body>
-<style type="text/css">
-ul {list-style-type: none;margin: 0;margin-left: 33px;padding: 0;overflow: hidden;}
-li {float: left;}
-button, visited {display: block;width: 250px;font-weight: bold;color: #FFFFFF;background-color: #190707;text-align: center;padding: 10px;text-decoration: none;text-transform: uppercase;}
-button:hover, button:active { background-color: rgb(201, 48, 44);}
+	<style type="text/css">
+ul {
+	list-style-type: none;
+	margin: 0;
+	margin-left: 33px;
+	padding: 0;
+	overflow: hidden;
+}
+
+li {
+	float: left;
+}
+
+button, visited {
+	display: block;
+	width: 250px;
+	font-weight: bold;
+	color: #ffffff;
+	background: #0095cd;
+	text-align: center;
+	padding: 10px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+button:hover, button:active {
+	background-color: rgb(201, 48, 44);
+}
 </style>
 	<ul>
 		<li><form action="/social/preaddfriend" method="post">

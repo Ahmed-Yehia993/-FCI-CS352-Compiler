@@ -28,8 +28,8 @@ button, visited {
 	display: block;
 	width: 250px;
 	font-weight: bold;
-	color: #FFFFFF;
-	background-color: #190707;
+		color: #ffffff;
+	background: #0095cd;
 	text-align: center;
 	padding: 10px;
 	text-decoration: none;
