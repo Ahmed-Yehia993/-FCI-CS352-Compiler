@@ -92,7 +92,7 @@ button, visited {
 }
 
 .head1, .head2, .head3 {
-	display: inline-block;
+	float: left;
 }
 
 button:hover, button:active {
@@ -119,7 +119,7 @@ button:hover, button:active {
 	</ul>
 	<div>
 
-		<div style="margin-left: 37px;" class="head1">
+		<div style="margin-left: 33px;" class="head1">
 			<div style="border: 1px solid black; width: 245px;">
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img alt="user"
 					src="/jsp/images.jpg">
@@ -128,18 +128,24 @@ button:hover, button:active {
 				<h3 style="margin-left: 80px;">${it.email}</h3>
 			</div>
 			<br>
-			<form id="tfnewsearch" method="get" action="/social/search">
-				<input type="text" value="search" class="tftextinput" name="sname"
+			<form id="tfnewsearch" method="post" action="/social/search">
+				<input type="text" placeholder="search Hashtag" class="tftextinput" name="sname"
 					size="16" maxlength="120"><input type="submit"
 					value="search" class="tfbutton">
 			</form>
-			<form action="/social/createpage" method="get">
+			<form id="tfnewsearch" method="post" action="/social/searchaboutpage">
+				<input type="text" placeholder="search pages" class="tftextinput" name="pagename"
+					size="16" maxlength="120"><input type="submit"
+					value="search" class="tfbutton">
+			</form>
+			<form action="/social/mypages" method="post">
 				<button>Create Page</button>
 			</form>
 
 		</div>
+		<div class="head2" style=" margin-left: 10px; border-left: 1px solid #000; height: 600px;"></div>
 		<div class="head3">
-<!-- 			<div style="margin-left: 250px; border-left: 1px solid #000; height: 500px;"></div> -->
+<!-- 			here timeline -->
 		</div>
 	</div>
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

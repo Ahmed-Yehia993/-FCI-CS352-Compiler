@@ -37,6 +37,52 @@ button, visited {
 button:hover, button:active {
 	background-color: rgb(201, 48, 44);
 }
+#tfheader {
+	background-color: #c3dfef;
+}
+
+.tftextinput {
+	margin: 0;
+	padding: 5px 15px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	border: 1px solid #0076a3;
+	border-right: 0px;
+	border-top-left-radius: 5px 5px;
+	border-bottom-left-radius: 5px 5px;
+}
+
+.tfbutton {
+	margin: 0;
+	padding: 5px 15px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	outline: none;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	border: solid 1px #0076a3;
+	border-right: 0px;
+	color: #ffffff;
+	background: #0095cd;
+	background: -webkit-gradient(linear, left top, left bottom, from(#00adee),
+		to(#0078a5));
+	background: -moz-linear-gradient(top, #00adee, #0078a5);
+	border-top-right-radius: 5px 5px;
+	border-bottom-right-radius: 5px 5px;
+}
+
+.tfbutton:hover {
+	text-decoration: none;
+	background: #007ead;
+	background: -webkit-gradient(linear, left top, left bottom, from(#0095cc),
+		to(#00678e));
+	background: -moz-linear-gradient(top, #0095cc, #00678e);
+}
+/* Fixes submit button height problem in Firefox */
+.tfbutton::-moz-focus-inner {
+	border: 0;
+}
 </style>
 	<ul>
 		<li><form action="/social/preaddfriend" method="post">
@@ -55,10 +101,11 @@ button:hover, button:active {
 				<button>sign out</button>
 			</form></li>
 	</ul>
+	<br><br><br>
 	<div align="center">
 		<table cellspacing="5px" cellpadding="5px" border="2px"
 			bgcolor="#E8E8E8" style="width: 70%">
-			<tr bgcolor="#E8E8E80">
+			<tr bgcolor="#0095cd">
 				<td><center>ID</center></td>
 				<td><center>NAME</center></td>
 				<td><center>E-MAIL</center></td>
@@ -82,18 +129,18 @@ button:hover, button:active {
 		<hr>
 		<br>
 		<h1>Enter the id of friend to unfriend</h1>
-		<form action="/social/unfriend" " method="post">
-			<input type="text" name="recieverID" /> <input type="submit"
-				value="unfriend">
-		</form>
-
+		<form id="tfnewsearch" method="post" action="/social/unfriend">
+			<input type="text" value="enter the id" class="tftextinput" name="recieverID"
+				size="30" maxlength="120"><input type="submit"
+				value="unfriend" class="tfbutton">
+		</form> 
 		<br>
 		<hr>
 		<br>
 		<h1>Enter the id of friend to send message</h1>
 		<form action="/social/sendmsg" method="post">
-			<input type="text" name="recieverID" /> <input type="submit"
-				value="send"> <br> <br>
+			<input class="tftextinput" type="text" name="recieverID" size="35"> 
+			<input class="tfbutton" type="submit" value="send"> <br> <br>
 			<textarea rows="10" cols="50" name="text"></textarea>
 		</form>
 

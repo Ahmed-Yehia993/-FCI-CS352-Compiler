@@ -195,14 +195,7 @@ public class MSGController {
 				JSONObject object;
 				object = (JSONObject) array.get(i);
 				msg.add(Message.parseMessageInfo(object.toJSONString()));
-			}
-			
-			int i = 0;
-			for (Iterator iterator = msg.iterator(); iterator.hasNext();) {
-				Message message = (Message) iterator.next();
-				System.out.println(i + " :  " + message.getTimeStamp() + " " + message.getText());
-				i++;
-			}
+			} 
 			PassedMsg.put("msgnotificationList", msg);
 			return Response.ok(new Viewable("/jsp/msgnotification", PassedMsg))
 					.build();
