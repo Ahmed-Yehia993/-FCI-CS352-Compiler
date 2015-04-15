@@ -168,7 +168,26 @@ public class FriendShip {
 		}
 		return temp;
 	}
+	
+	public static boolean isFriend(String id1 , String id2) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		HashSet<Long> lis = new HashSet<>();
 
+		Query gaeQuery = new Query("friends");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+
+		for (Entity entity : pq.asIterable()) {
+			if(entity.getProperty("friendID1").toString().equals(id1) &&
+					entity.getProperty("friendID2").toString().equals(id2))
+				return true;
+			else if(entity.getProperty("friendID2").toString().equals(id1) &&
+					entity.getProperty("friendID1").toString().equals(id2))
+				return true;
+		}		
+		return false;
+	}
+	
 	public static Vector<User> getMyFriends(String id) {
 
 		long ID = Long.parseLong(id);
