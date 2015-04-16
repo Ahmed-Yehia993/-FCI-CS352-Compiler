@@ -213,6 +213,11 @@ public class Post {
 	}
 	
 	public static boolean UpdateSharesCounter(String userID , String postID) {
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		String timestamp = dateFormat.format(cal.getTime()).toString();
+		
 		long ID = Long.parseLong(postID);
 		DatastoreService data = DatastoreServiceFactory.getDatastoreService();
 		Query gaQuery = new Query("pagesposts");
@@ -239,7 +244,7 @@ public class Post {
 				request.setProperty("ownerID", userID);
 				request.setProperty("pageID", -1);
 				request.setProperty("text", entity.getProperty("text"));
-				request.setProperty("creationTime", entity.getProperty("creationTime"));
+				request.setProperty("creationTime", timestamp);
 				request.setProperty("privacy", entity.getProperty("privacy"));
 				request.setProperty("hashTag", entity.getProperty("hashTag"));
 				request.setProperty("numberOfLike", 0);
