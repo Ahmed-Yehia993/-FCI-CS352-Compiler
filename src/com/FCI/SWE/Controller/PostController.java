@@ -140,6 +140,7 @@ public class PostController {
 				JSONObject object;
 				object = (JSONObject) array.get(i);
 				msg.add(Post.parsePostInfo(object.toJSONString()));
+				//System.out.println(Post.parsePostInfo(object.toJSONString()).getVa());
 			} 
 			
 			PassedMsg.put("PostsList", msg);
@@ -297,7 +298,7 @@ public class PostController {
 	@POST
 	@Path("/likepost")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String likepost(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,
+	public void likepost(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,
 			@FormParam("post_id") String post_id) {
 		
 		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
@@ -330,28 +331,20 @@ public class PostController {
 			}
 			writer.close();
 			reader.close();
-			JSONParser parser = new JSONParser();
-			Object obj = parser.parse(retJson);
-			JSONObject object = (JSONObject) obj;
-			if (object.get("Status").equals("Failed"))
-				return "Error , try again";
-			if (object.get("Status").equals("OK"))
-				return "Done Successfully";
+//			JSONParser parser = new JSONParser();
+//			Object obj = parser.parse(retJson);
+//			JSONObject object = (JSONObject) obj;
+//			if (object.get("Status").equals("Failed"))
+//				return "Error , try again";
+//			if (object.get("Status").equals("OK"))
+//				return "Done Successfully";
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		/*
-		 * UserEntity user = new UserEntity(uname, email, pass);
-		 * user.saveUser(); return uname;
-		 */
-		return null;
 
 	}
 	

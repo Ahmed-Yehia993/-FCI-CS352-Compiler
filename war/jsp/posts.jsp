@@ -167,8 +167,7 @@ button:hover, button:active {
 					<c:out value="${post.text}"></c:out>
 				</p>
 				<p>
-					Likes :
-					<c:out value="${post.numberOFLike}"></c:out>
+					Likes : <label id="NOL${post.id}"  >${post.numberOFLike}</label>
 				</p>
 				<p>
 					Shares :
@@ -179,12 +178,35 @@ button:hover, button:active {
 					<c:out value="${post.privacy}"></c:out>
 				</p>
 				
-				<div >
-					<form action="/social/likepost" method="post" style="display: inline-block;">
+				<div>
+
+					<form action="/social/likepost" method="post"
+						style="display: inline-block;">
 						<input type="text" name="post_id" value="${post.id}" hidden>
-						<input class="tfbtn" type="submit" value="Like" />
+
+						<button id="${post.id}" class="tfbtn" onclick=change(${post.id})>
+							${post.va}</button>
 					</form>
-					<form action="/social/sharepost" method="post" style="display: inline-block;">
+					<script type="text/javascript">
+				
+				function change(t) {
+					vasr = document.getElementById(t).innerHTML ;
+					var srt1 = "NOL";
+					x = document.getElementById(srt1.concat(t)).innerHTML;
+					xx = parseInt(x,10) ;
+					if(vasr.toLowerCase().indexOf("like") == 0) {
+						document.getElementById(t).innerHTML = 'UnLike';
+						xx += 1;
+						document.getElementById(srt1.concat(t)).innerHTML = xx;
+					} else {
+						document.getElementById(t).innerHTML = 'Like';
+						xx -= 1;
+						document.getElementById(srt1.concat(t)).innerHTML = xx;
+					}
+				}
+				</script>
+					<form action="/social/sharepost" method="post"
+						style="display: inline-block;">
 						<input type="text" name="post_id" value="${post.id}" hidden>
 						<input class="tfbtn" type="submit" value="Share" />
 					</form>

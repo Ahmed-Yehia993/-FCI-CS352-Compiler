@@ -17,9 +17,11 @@ ul {
 	padding: 0;
 	overflow: hidden;
 }
+
 .tfbtn {
 	margin: 0;
-	width: 60px; padding : 5px 15px;
+	width: 60px;
+	padding: 5px 15px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	outline: none;
@@ -37,6 +39,7 @@ ul {
 	border-bottom-right-radius: 5px 5px;
 	padding: 5px 15px;
 }
+
 li {
 	float: left;
 }
@@ -74,7 +77,8 @@ button:hover, button:active {
 
 .tfbutton {
 	margin: 0;
-	width: 120px; padding : 5px 15px;
+	width: 120px;
+	padding: 5px 15px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	outline: none;
@@ -127,22 +131,22 @@ button:hover, button:active {
 	<br>
 	<br>
 	<br>
-	
+
 	<div align="center">
-	<h1>Welcome in Your TimeLine </h1>
+		<h1>Welcome in Your TimeLine</h1>
 		<form action="/social/createpost" method="post">
 			<!-- 			<input class="tftextinput" type="text" name="recieverID" size="35">  -->
 			<textarea rows="7" cols="70" name="text"
 				placeholder="Write what's in your mind"></textarea>
-				
-			<br> <br> 
+
+			<br> <br>
 			<div style="display: inline-block;">
-				<input id="privatee" type="checkbox" name="privatee" value="privatee">
-				<label for="option">private</label> 
-				<input id="publice" type="checkbox" name="publice" value="privatee"> 
+				<input id="privatee" type="checkbox" name="privatee"
+					value="privatee"> <label for="option">private</label> <input
+					id="publice" type="checkbox" name="publice" value="privatee">
 				<label for="option">public </label>&nbsp;&nbsp;
-			</div><input class="tfbutton" type="submit"
-				value="post">
+			</div>
+			<input class="tfbutton" type="submit" value="post">
 		</form>
 	</div>
 	<br>
@@ -168,8 +172,8 @@ button:hover, button:active {
 					<c:out value="${post.text}"></c:out>
 				</p>
 				<p>
-					Likes :
-					<c:out value="${post.numberOFLike}"></c:out>
+					Likes : <label id="NOL${post.id}"  >${post.numberOFLike}</label>
+
 				</p>
 				<p>
 					Shares :
@@ -180,11 +184,32 @@ button:hover, button:active {
 					<c:out value="${post.privacy}"></c:out>
 				</p>
 				<div>
+
 					<form action="/social/likepost" method="post"
 						style="display: inline-block;">
 						<input type="text" name="post_id" value="${post.id}" hidden>
-						<input class="tfbtn" type="submit" value="Like" />
+
+						<button id="${post.id}" class="tfbtn" onclick=change(${post.id})>
+							${post.va}</button>
 					</form>
+					<script type="text/javascript">
+				
+				function change(t) {
+					vasr = document.getElementById(t).innerHTML ;
+					var srt1 = "NOL";
+					x = document.getElementById(srt1.concat(t)).innerHTML;
+					xx = parseInt(x,10) ;
+					if(vasr.toLowerCase().indexOf( "like") == 0) {
+						document.getElementById(t).innerHTML = 'UnLike';
+						xx += 1;
+						document.getElementById(srt1.concat(t)).innerHTML = xx;
+					} else {
+						document.getElementById(t).innerHTML = 'Like';
+						xx -= 1;
+						document.getElementById(srt1.concat(t)).innerHTML = xx;
+					}
+				}
+				</script>
 					<form action="/social/sharepost" method="post"
 						style="display: inline-block;">
 						<input type="text" name="post_id" value="${post.id}" hidden>
