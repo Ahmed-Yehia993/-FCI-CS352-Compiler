@@ -9,7 +9,7 @@
 <title>Insert title here</title>
 </head>
 
-<body background="/jsp/home.jpg">
+<body>
 
 	<style type="text/css">
 #tfheader {

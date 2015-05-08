@@ -17,7 +17,7 @@
 <!-- Bootstrap -->
 <link href="bootstrap.min.css" rel="stylesheet">
 </head>
-<body background="/jsp/home.jpg">
+<body>
 
 	<style type="text/css">
 ul {
@@ -120,9 +120,6 @@ button:hover, button:active {
 	<div>
 
 		<div style="margin-left: 33px;" class="head1">
-			<form action="/social/timeline" method="post">
-				<button><% out.println(request.getSession().getAttribute("current_user_name").toString() + " TIMELINE"); %></button>
-			</form>
 			<div style="border: 1px solid black; width: 245px;">
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img alt="user"
 					src="/jsp/images.jpg">
@@ -131,8 +128,8 @@ button:hover, button:active {
 				<h3 style="margin-left: 80px;">${it.email}</h3>
 			</div>
 			<br>
-			<form id="tfnewsearch" method="post" action="/social/searchtag">
-				<input type="text" placeholder="search Hashtag" class="tftextinput" name="tagname"
+			<form id="tfnewsearch" method="post" action="/social/search">
+				<input type="text" placeholder="search Hashtag" class="tftextinput" name="sname"
 					size="16" maxlength="120"><input type="submit"
 					value="search" class="tfbutton">
 			</form>
@@ -144,9 +141,7 @@ button:hover, button:active {
 			<form action="/social/mypages" method="post">
 				<button>Create Page</button>
 			</form>
-			<form action="/social/posts" method="post">
-				<button>Take a Tour</button>
-			</form>
+
 		</div>
 		<div class="head2" style=" margin-left: 10px; border-left: 1px solid #000; height: 600px;"></div>
 		<div class="head3">

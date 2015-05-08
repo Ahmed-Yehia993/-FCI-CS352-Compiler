@@ -8,7 +8,7 @@
 	content="text/html; charset=windows-1256">
 <title>Insert title here</title>
 </head>
-<body background="/jsp/home.jpg">
+<body>
 	<style type="text/css">
 ul {
 	list-style-type: none;

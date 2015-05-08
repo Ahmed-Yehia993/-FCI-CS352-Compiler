@@ -8,28 +8,8 @@
 	content="text/html; charset=windows-1256">
 <title>Insert title here</title>
 </head>
-<body background="/jsp/home.jpg">
+<body>
 	<style type="text/css">
-	.tfbtn {
-	margin: 0;
-	width: 60px; padding : 5px 15px;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	outline: none;
-	cursor: pointer;
-	text-align: center;
-	text-decoration: none;
-	border: solid 1px #0076a3;
-	border-right: 0px;
-	color: #ffffff;
-	background: #0095cd;
-	background: -webkit-gradient(linear, left top, left bottom, from(#00adee),
-		to(#0078a5));
-	background: -moz-linear-gradient(top, #00adee, #0078a5);
-	border-top-right-radius: 5px 5px;
-	border-bottom-right-radius: 5px 5px;
-	padding: 5px 15px;
-}
 ul {
 	list-style-type: none;
 	margin: 0;
@@ -167,7 +147,7 @@ button:hover, button:active {
 
 	<div style="border: 1px solid black; width: 600px; margin-left: 400px;">
 		<div align="center">
-			<c:forEach items="${it.PagePostsList}" var="post">
+			<c:forEach items="${it.PagePostsList}" var="page">
 				<h3>
 					page Name:
 					<%
@@ -175,32 +155,19 @@ button:hover, button:active {
 								"current_page_name"));
 				%>
 				</h3>
+				<h5>
+					post Time:
+					<c:out value="${page.creationTime}"></c:out>
+				</h5>
 				<p>
 					Status :
-					<c:out value="${post.text}"></c:out>
+					<c:out value="${page.text}"></c:out>
 				</p>
-				<p>
-					Likes :
-					<c:out value="${post.numberOFLike}"></c:out>
-				</p>
-				<p>
-					Shares :
-					<c:out value="${post.numberOFShare}"></c:out>
-				</p>
-				
-				<div>
-					<form action="/social/likepost" method="post"
-						style="display: inline-block;">
-						<input type="text" name="post_id" value="${post.id}" hidden>
-						<input class="tfbtn" type="submit" value="Like" />
-					</form>
-					<form action="/social/sharepost" method="post"
-						style="display: inline-block;">
-						<input type="text" name="post_id" value="${post.id}" hidden>
-						<input class="tfbtn" type="submit" value="Share" />
-					</form>
-				</div>
 				<hr>
+				<%-- 					<td><center> --%>
+				<%-- 							<c:out value="${page.numberOFLike}"></c:out> --%>
+				<%-- 						</center></td> --%>
+				<!-- 				</tr> -->
 			</c:forEach>
 		</div>
 	</div>
