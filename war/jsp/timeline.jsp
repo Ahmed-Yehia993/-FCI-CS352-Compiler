@@ -169,7 +169,8 @@ button:hover, button:active {
 				</p>
 				<p>
 					Likes :
-					<c:out value="${post.numberOFLike}"></c:out>
+					<label id = "NOL" + "${post.id}"  >${post.numberOFLike}</label>
+					
 				</p>
 				<p>
 					Shares :
@@ -180,11 +181,31 @@ button:hover, button:active {
 					<c:out value="${post.privacy}"></c:out>
 				</p>
 				<div>
+				
 					<form action="/social/likepost" method="post"
 						style="display: inline-block;">
 						<input type="text" name="post_id" value="${post.id}" hidden>
-						<input class="tfbtn" type="submit" value="Like" />
+					
+						<button id = "${post.id}"  class="tfbtn"  onclick=change(${post.id})> 
+					${post.va}
+						</button>
 					</form>
+				<script type="text/javascript">
+				
+				function change(t){
+				//	alert("asd");
+				vasr = document.getElementById(t).innerHTML ;
+				vars = document.getElementById("NOL"+t).innerHTML ;
+				if(vasr.toLowerCase().indexOf( "like") == 0)
+						{
+					document.getElementById(t).innerhtml = 'UnLike';
+					
+					vars = ;
+						}
+					else
+						document.getElementById(t).innerHTML = 'Like';
+				}
+				</script>
 					<form action="/social/sharepost" method="post"
 						style="display: inline-block;">
 						<input type="text" name="post_id" value="${post.id}" hidden>

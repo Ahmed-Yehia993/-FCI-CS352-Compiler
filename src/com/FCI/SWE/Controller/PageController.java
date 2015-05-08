@@ -93,7 +93,6 @@ public class PageController {
 
 	}
     
-
 	@POST
 	@Path("/mypages")
 	@Produces("text/html")

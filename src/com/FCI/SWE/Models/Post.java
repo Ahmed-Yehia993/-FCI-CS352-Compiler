@@ -3,6 +3,7 @@ package com.FCI.SWE.Models;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -26,8 +27,9 @@ public class Post {
 	private String creationTime;
 	private long numberOFLike;
 	private long numberOFShare;
-	
-	public Post(String userID,long pageID, String text, String creationTime,
+	private String va;
+
+	public Post(String userID, long pageID, String text, String creationTime,
 			long numberOFLike) {
 		this.userID = userID;
 		this.pageID = pageID;
@@ -63,15 +65,19 @@ public class Post {
 	public String getOwnerID() {
 		return userID;
 	}
-	
+
 	public void setpageID(long pageID) {
 		this.pageID = pageID;
+	}
+
+	public void setVa(String va_) {
+		this.va = va_;
 	}
 
 	public long getpageID() {
 		return pageID;
 	}
-	
+
 	public void setNumberOFLike(long numberOFLike) {
 		this.numberOFLike = numberOFLike;
 	}
@@ -79,7 +85,7 @@ public class Post {
 	public long getNumberOFLike() {
 		return numberOFLike;
 	}
-	
+
 	public void setNumberOFShare(long numberOFShare) {
 		this.numberOFShare = numberOFShare;
 	}
@@ -87,7 +93,7 @@ public class Post {
 	public long getNumberOFShare() {
 		return numberOFShare;
 	}
-	
+
 	private void setCreationTime(String creationTime) {
 		this.creationTime = creationTime;
 	}
@@ -95,7 +101,7 @@ public class Post {
 	public String getCreationTime() {
 		return creationTime;
 	}
-	
+
 	public void setHashTag(String hashTag) {
 		this.hashTag = hashTag;
 	}
@@ -103,7 +109,7 @@ public class Post {
 	public String getHashTag() {
 		return hashTag;
 	}
-	
+
 	public void setprivacy(String privacy) {
 		this.privacy = privacy;
 	}
@@ -111,6 +117,11 @@ public class Post {
 	public String getprivacy() {
 		return privacy;
 	}
+
+	public String getVa() {
+		return va;
+	}
+
 	public static Post parsePostInfo(String json) {
 		JSONParser parser = new JSONParser();
 		try {
@@ -127,6 +138,8 @@ public class Post {
 					.toString()));
 			page.setNumberOFShare(Long.parseLong(object.get("NumberOFShare")
 					.toString()));
+			page.setVa(object.get("va").toString());
+
 			return page;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -136,8 +149,8 @@ public class Post {
 		return null;
 
 	}
-	
-	 public static boolean updatelikeCounter(String post) {
+
+	public static boolean updatelikeCounter(String post) {
 		long postID = Long.parseLong(post);
 		DatastoreService data = DatastoreServiceFactory.getDatastoreService();
 		Query gaQuery = new Query("pagesposts");
@@ -152,28 +165,33 @@ public class Post {
 				msg.setProperty("text", entity.getProperty("text"));
 				msg.setProperty("privacy", entity.getProperty("privacy"));
 				msg.setProperty("hashTag", entity.getProperty("hashTag"));
-				msg.setProperty("creationTime", entity.getProperty("creationTime"));
-				msg.setProperty("numberOfLike", (long) entity.getProperty("numberOfLike") + 1);
-				msg.setProperty("NumberOFShare", entity.getProperty("NumberOFShare"));
+				msg.setProperty("creationTime",
+						entity.getProperty("creationTime"));
+				msg.setProperty("numberOfLike",
+						(long) entity.getProperty("numberOfLike") + 1);
+				msg.setProperty("NumberOFShare",
+						entity.getProperty("NumberOFShare"));
 				data.put(msg);
 			}
 		}
 		return true;
-		}
-	public static boolean CreatePost(String text , String ownerID , String privacy ) {
-		
+	}
+
+	public static boolean CreatePost(String text, String ownerID, String privacy) {
+
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String timestamp = dateFormat.format(cal.getTime()).toString();
-		
+
 		String hashTag = "";
 		long owner = Long.parseLong(ownerID);
-		if (text.contains("#")) 
-			hashTag = text.substring(text.indexOf("#"),text.indexOf("#") + text.length() - text.indexOf("#"));
-		
+		if (text.contains("#"))
+			hashTag = text.substring(text.indexOf("#"), text.indexOf("#")
+					+ text.length() - text.indexOf("#"));
+
 		String arr[] = hashTag.split(" ");
 		hashTag = arr[0];
-		
+
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("pagesposts");
@@ -192,7 +210,7 @@ public class Post {
 			request.setProperty("hashTag", hashTag);
 			request.setProperty("numberOfLike", 0);
 			request.setProperty("NumberOFShare", 0);
-			
+
 			datastore.put(request);
 		} else {
 			Entity request = new Entity("pagesposts", 1);
@@ -205,41 +223,43 @@ public class Post {
 			request.setProperty("hashTag", hashTag);
 			request.setProperty("numberOfLike", 0);
 			request.setProperty("NumberOFShare", 0);
-			
+
 			datastore.put(request);
 		}
 
 		return true;
 	}
-	
-	public static boolean UpdateSharesCounter(String userID , String postID) {
-		
+
+	public static boolean UpdateSharesCounter(String userID, String postID) {
+
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		String timestamp = dateFormat.format(cal.getTime()).toString();
-		
+
 		long ID = Long.parseLong(postID);
 		DatastoreService data = DatastoreServiceFactory.getDatastoreService();
 		Query gaQuery = new Query("pagesposts");
 		PreparedQuery p = data.prepare(gaQuery);
 		List<Entity> lis = p.asList(FetchOptions.Builder.withDefaults());
-		
+
 		for (Entity entity : p.asIterable()) {
-			if (entity.getKey().getId() == ID) {				
-				Entity msg = new Entity("pagesposts", entity.getKey()
-						.getId());
+			if (entity.getKey().getId() == ID) {
+				Entity msg = new Entity("pagesposts", entity.getKey().getId());
 				msg.setProperty("ownerID", entity.getProperty("ownerID"));
 				msg.setProperty("pageID", entity.getProperty("pageID"));
 				msg.setProperty("text", entity.getProperty("text"));
 				msg.setProperty("privacy", entity.getProperty("privacy"));
 				msg.setProperty("hashTag", entity.getProperty("hashTag"));
-				msg.setProperty("creationTime", entity.getProperty("creationTime"));
-				msg.setProperty("numberOfLike", entity.getProperty("numberOfLike"));
-				msg.setProperty("NumberOFShare", (long)entity.getProperty("NumberOFShare") + 1);
+				msg.setProperty("creationTime",
+						entity.getProperty("creationTime"));
+				msg.setProperty("numberOfLike",
+						entity.getProperty("numberOfLike"));
+				msg.setProperty("NumberOFShare",
+						(long) entity.getProperty("NumberOFShare") + 1);
 				data.put(msg);
-				
-				Entity request = new Entity("pagesposts", lis.get(lis.size() - 1)
-						.getKey().getId() + 1);
+
+				Entity request = new Entity("pagesposts", lis
+						.get(lis.size() - 1).getKey().getId() + 1);
 
 				request.setProperty("ownerID", userID);
 				request.setProperty("pageID", -1);
@@ -249,34 +269,51 @@ public class Post {
 				request.setProperty("hashTag", entity.getProperty("hashTag"));
 				request.setProperty("numberOfLike", 0);
 				request.setProperty("NumberOFShare", 0);
-				
+
 				data.put(request);
 			}
 		}
 		return true;
 	}
-	
-	public static boolean isLikePost(String userID , String postID) {
+
+	public static HashSet<Long> getUserLikePost(String curentID) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		HashSet<Long> temp = new HashSet<>();
+
+		Query gaeQuery = new Query("postslikes");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("userID").toString().equals(curentID)) {
+				temp.add(Long.parseLong(entity.getProperty("postID").toString()));
+			}
+		}
+		return temp;
+	}
+
+	public static boolean isLikePost(String userID, String postID) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("postslikes");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 
 		for (Entity entity : pq.asIterable()) {
-			if (entity.getProperty("userID").toString().equals(userID) &&
-					entity.getProperty("postID").toString().equals(postID)) {
+			if (entity.getProperty("userID").toString().equals(userID)
+					&& entity.getProperty("postID").toString().equals(postID)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	public static boolean likePost(String userID ,String postID) {
+
+	public static boolean likePost(String userID, String postID) {
 		long owner = Long.parseLong(userID);
 		long post = Long.parseLong(postID);
-		
-		if (isLikePost(userID,postID))  return false;
-		
+
+		if (isLikePost(userID, postID))
+			return false;
+
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("postslikes");

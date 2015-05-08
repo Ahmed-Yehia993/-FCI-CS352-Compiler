@@ -140,6 +140,7 @@ public class PostController {
 				JSONObject object;
 				object = (JSONObject) array.get(i);
 				msg.add(Post.parsePostInfo(object.toJSONString()));
+				//System.out.println(Post.parsePostInfo(object.toJSONString()).getVa());
 			} 
 			
 			PassedMsg.put("PostsList", msg);
@@ -297,7 +298,7 @@ public class PostController {
 	@POST
 	@Path("/likepost")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String likepost(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,
+	public boolean likepost(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,
 			@FormParam("post_id") String post_id) {
 		
 		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
@@ -334,9 +335,9 @@ public class PostController {
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
 			if (object.get("Status").equals("Failed"))
-				return "Error , try again";
+				return false;
 			if (object.get("Status").equals("OK"))
-				return "Done Successfully";
+				return true;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -351,7 +352,8 @@ public class PostController {
 		 * UserEntity user = new UserEntity(uname, email, pass);
 		 * user.saveUser(); return uname;
 		 */
-		return null;
+//		return null;
+		return false;
 
 	}
 	
