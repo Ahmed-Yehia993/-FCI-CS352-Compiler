@@ -8,6 +8,7 @@ import com.FCI.SWE.Models.User;
 
 public class UserTest {
 
+	/*** test get user name by id *************/
 	@DataProvider(name = "getUserNameTest")
 	public static Object[][] getUserStringTest() {
 		Object[][] x = { { "ahmed", 1 }, { "ibrahim", 2 }, { "asd", 3 } };
