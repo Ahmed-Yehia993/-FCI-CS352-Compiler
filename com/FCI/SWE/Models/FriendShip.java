@@ -15,15 +15,16 @@ import com.google.appengine.api.datastore.Query;
 public class FriendShip {
 
 	public static boolean sendRequest(String senderID, String receiverID) {
-		
-		if(senderID.equals(receiverID)) return false;
-		
+
+		if (senderID.equals(receiverID))
+			return false;
+
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("notification");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
-        
+
 		if (list.size() != 0) {
 			Entity request = new Entity("notification", list
 					.get(list.size() - 1).getKey().getId() + 1);
@@ -31,10 +32,9 @@ public class FriendShip {
 			request.setProperty("senderID", senderID);
 			request.setProperty("receiverID", receiverID);
 			datastore.put(request);
-		}
-		else{
+		} else {
 			Entity request = new Entity("notification", 1);
-            
+
 			request.setProperty("senderID", senderID);
 			request.setProperty("receiverID", receiverID);
 			datastore.put(request);
@@ -43,37 +43,39 @@ public class FriendShip {
 		return true;
 
 	}
+
 	public static boolean unFriendRequest(String senderID, String receiverID) {
-		if(senderID.equals(receiverID)) return false;
-		
+		if (senderID.equals(receiverID))
+			return false;
+
 		long ID1 = Long.parseLong(senderID);
 		long ID2 = Long.parseLong(receiverID);
-		
-		DatastoreService data = DatastoreServiceFactory
-				.getDatastoreService();
+
+		DatastoreService data = DatastoreServiceFactory.getDatastoreService();
 		Query gaQuery = new Query("friends");
 		PreparedQuery p = data.prepare(gaQuery);
 		List<Entity> lis = p.asList(FetchOptions.Builder.withDefaults());
-//		System.out.println(senderID + " " + receiverID);		
 		for (Entity entity : p.asIterable()) {
-			if(entity.getProperty("friendID1").toString().equals(senderID) && entity.getProperty("friendID2").toString().equals(receiverID) || 
-					entity.getProperty("friendID2").toString().equals(senderID) && entity.getProperty("friendID1").toString().equals(receiverID))
-			{
+			if (entity.getProperty("friendID1").toString().equals(senderID)
+					&& entity.getProperty("friendID2").toString()
+							.equals(receiverID)
+					|| entity.getProperty("friendID2").toString()
+							.equals(senderID)
+					&& entity.getProperty("friendID1").toString()
+							.equals(receiverID)) {
 				Entity req = new Entity("friends", entity.getKey().getId());
 				data.delete(entity.getKey());
-				//req.setProperty("friendID1", String.valueOf(-1));
-				//req.setProperty("friendID2",  String.valueOf(-1));
-			    //data.put(req);
 			}
 		}
 		return true;
 
 	}
+
 	public static boolean acceptFriendRequest(String senderID, String receiverID) {
-		if(senderID.equals(receiverID)) return false;
-		
-		long ID1 = Long.parseLong(senderID);
-		long ID2 = Long.parseLong(receiverID);
+		if (senderID.equals(receiverID))
+			return false;
+
+		long ID1 = Long.parseLong(senderID), ID2 = Long.parseLong(receiverID);
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("friends");
@@ -81,42 +83,41 @@ public class FriendShip {
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
 
 		if (list.size() != 0) {
-			Entity request = new Entity("friends", list
-					.get(list.size() - 1).getKey().getId() + 1);
+			Entity request = new Entity("friends", list.get(list.size() - 1)
+					.getKey().getId() + 1);
 
 			request.setProperty("friendID1", senderID);
 			request.setProperty("friendID2", receiverID);
 			datastore.put(request);
-		}
-		else{
+		} else {
 			Entity request = new Entity("friends", 1);
 
 			request.setProperty("friendID1", senderID);
 			request.setProperty("friendID2", receiverID);
 			datastore.put(request);
 		}
-		
-		DatastoreService data = DatastoreServiceFactory
-				.getDatastoreService();
+
+		DatastoreService data = DatastoreServiceFactory.getDatastoreService();
 		Query gaQuery = new Query("notification");
 		PreparedQuery p = data.prepare(gaQuery);
 		List<Entity> lis = p.asList(FetchOptions.Builder.withDefaults());
-		System.out.println(senderID + " " + receiverID);		
+		System.out.println(senderID + " " + receiverID);
 		for (Entity entity : p.asIterable()) {
-			if(entity.getProperty("senderID").toString().equals(senderID) && entity.getProperty("receiverID").toString().equals(receiverID) || 
-					entity.getProperty("receiverID").toString().equals(senderID) && entity.getProperty("senderID").toString().equals(receiverID))
-			{
+			if (entity.getProperty("senderID").toString().equals(senderID)
+					&& entity.getProperty("receiverID").toString()
+							.equals(receiverID)
+					|| entity.getProperty("receiverID").toString()
+							.equals(senderID)
+					&& entity.getProperty("senderID").toString()
+							.equals(receiverID)) {
 				Entity req = new Entity("notification", entity.getKey().getId());
 				data.delete(entity.getKey());
-				//req.setProperty("senderID", String.valueOf(-1));
-				//req.setProperty("receiverID",  String.valueOf(-1));
-			    //datastore.put(req);
 			}
 		}
 		return true;
 
 	}
-	
+
 	public static Vector<User> getUsers(String id) {
 
 		long ID = Long.parseLong(id);
@@ -168,8 +169,8 @@ public class FriendShip {
 		}
 		return temp;
 	}
-	
-	public static boolean isFriend(String id1 , String id2) {
+
+	public static boolean isFriend(String id1, String id2) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		HashSet<Long> lis = new HashSet<>();
@@ -178,16 +179,16 @@ public class FriendShip {
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 
 		for (Entity entity : pq.asIterable()) {
-			if(entity.getProperty("friendID1").toString().equals(id1) &&
-					entity.getProperty("friendID2").toString().equals(id2))
+			if (entity.getProperty("friendID1").toString().equals(id1)
+					&& entity.getProperty("friendID2").toString().equals(id2))
 				return true;
-			else if(entity.getProperty("friendID2").toString().equals(id1) &&
-					entity.getProperty("friendID1").toString().equals(id2))
+			else if (entity.getProperty("friendID2").toString().equals(id1)
+					&& entity.getProperty("friendID1").toString().equals(id2))
 				return true;
-		}		
+		}
 		return false;
 	}
-	
+
 	public static Vector<User> getMyFriends(String id) {
 
 		long ID = Long.parseLong(id);
@@ -200,10 +201,12 @@ public class FriendShip {
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 
 		for (Entity entity : pq.asIterable()) {
-			if(entity.getProperty("friendID1").toString().equals(id))
-			     lis.add(Long.parseLong(entity.getProperty("friendID2").toString()));
-			else if(entity.getProperty("friendID2").toString().equals(id))
-			     lis.add(Long.parseLong(entity.getProperty("friendID1").toString()));
+			if (entity.getProperty("friendID1").toString().equals(id))
+				lis.add(Long.parseLong(entity.getProperty("friendID2")
+						.toString()));
+			else if (entity.getProperty("friendID2").toString().equals(id))
+				lis.add(Long.parseLong(entity.getProperty("friendID1")
+						.toString()));
 		}
 		Iterator iterator = lis.iterator();
 		Vector<User> temp = new Vector<User>();
@@ -212,11 +215,9 @@ public class FriendShip {
 			users = User.getUser((long) iterator.next());
 			temp.add(users);
 		}
-		//System.out.println("--------");
-		//System.out.println(temp.get(0).getName() + "--------");
 		return temp;
 	}
-	
+
 	public static Vector<User> getNotifications(String id) {
 
 		long ID = Long.parseLong(id);
@@ -229,8 +230,9 @@ public class FriendShip {
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 
 		for (Entity entity : pq.asIterable()) {
-			if(entity.getProperty("receiverID").toString().equals(id))
-			     lis.add(Long.parseLong(entity.getProperty("senderID").toString()));
+			if (entity.getProperty("receiverID").toString().equals(id))
+				lis.add(Long.parseLong(entity.getProperty("senderID")
+						.toString()));
 		}
 
 		Iterator iterator = lis.iterator();
@@ -238,10 +240,10 @@ public class FriendShip {
 		while (iterator.hasNext()) {
 			User users = new User();
 			users = User.getUser((long) iterator.next());
-			
+
 			temp.add(users);
 		}
-		
+
 		return temp;
 	}
 

@@ -1,12 +1,5 @@
 package com.FCI.SWE.Controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -32,6 +25,12 @@ import com.FCI.SWE.Models.Post;
 @Produces("text/html")
 public class PostController {
 
+	private String serviceUrl, urlParameters, retJson;
+	/**
+	 * 
+	 * this method for creating post
+	 **/
+	
 	@POST
 	@Path("/createpost")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -43,37 +42,14 @@ public class PostController {
 
 		current_user_id = (String) req.getSession().getAttribute(
 				"current_user_id");
-		String serviceUrl = "http://localhost:8888/rest/CreatePostService";
+		serviceUrl = "http://localhost:8888/rest/CreatePostService";
 		try {
-			URL url = new URL(serviceUrl);
-			String urlParameters = "text=" + text + "&current_user_id="
+			urlParameters = "text=" + text + "&current_user_id="
 					+ current_user_id + "&privatee=" + privatee + "&publice="
 					+ publice;
 
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.setInstanceFollowRedirects(false);
-			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(60000); // 60 Seconds
-			connection.setReadTimeout(60000); // 60 Seconds
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded;charset=UTF-8");
-			OutputStreamWriter writer = new OutputStreamWriter(
-					connection.getOutputStream());
-			writer.write(urlParameters);
-			writer.flush();
-			String line, retJson = "";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-
-			while ((line = reader.readLine()) != null) {
-				retJson += line;
-			}
-			writer.close();
-			reader.close();
+			retJson = Connection.connect(serviceUrl, urlParameters,
+					"POST", "application/x-www-form-urlencoded;charset=UTF-8");
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
@@ -81,24 +57,19 @@ public class PostController {
 				return "Error , try again";
 			if (object.get("Status").equals("OK"))
 				return "Post Created Successfully";
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * UserEntity user = new UserEntity(uname, email, pass);
-		 * user.saveUser(); return uname;
-		 */
 		return null;
 
 	}
 
+	/**
+	 * 
+	 * this method for view user timeline
+	 **/
+	
 	@POST
 	@Path("/timeline")
 	@Produces("text/html")
@@ -108,35 +79,11 @@ public class PostController {
 		current_user_id = (String) req.getSession().getAttribute(
 				"current_user_id");
 
-		String serviceUrl = "http://localhost:8888/rest/TimeLineService";
+		serviceUrl = "http://localhost:8888/rest/TimeLineService";
 		try {
-			URL url = new URL(serviceUrl);
-			String urlParameters = "&current_user_id=" + current_user_id;
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.setInstanceFollowRedirects(false);
-			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(60000); // 60 Seconds
-			connection.setReadTimeout(60000); // 60 Seconds
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded;charset=UTF-8");
-
-			OutputStreamWriter writer = new OutputStreamWriter(
-					connection.getOutputStream());
-			writer.write(urlParameters);
-			writer.flush();
-			String line, retJson = "";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-
-			while ((line = reader.readLine()) != null) {
-				retJson += line;
-			}
-			writer.close();
-			reader.close();
+			urlParameters = "&current_user_id=" + current_user_id;
+			retJson = Connection.connect(serviceUrl, urlParameters,
+					"POST", "application/x-www-form-urlencoded;charset=UTF-8");
 			Map<String, Vector<Post>> PassedMsg = new HashMap<String, Vector<Post>>();
 			JSONParser parser = new JSONParser();
 			JSONArray array = (JSONArray) parser.parse(retJson);
@@ -151,23 +98,18 @@ public class PostController {
 			PassedMsg.put("PostsList", msg);
 			return Response.ok(new Viewable("/jsp/timeline", PassedMsg))
 					.build();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * UserEntity user = new UserEntity(uname, email, pass);
-		 * user.saveUser(); return uname;
-		 */
 		return null;
 	}
 
+	/**
+	 * 
+	 * this method for getting posts from DB
+	 **/
+	
 	@POST
 	@Path("/posts")
 	@Produces("text/html")
@@ -177,35 +119,11 @@ public class PostController {
 		current_user_id = (String) req.getSession().getAttribute(
 				"current_user_id");
 
-		String serviceUrl = "http://localhost:8888/rest/PostsService";
+		serviceUrl = "http://localhost:8888/rest/PostsService";
 		try {
-			URL url = new URL(serviceUrl);
-			String urlParameters = "&current_user_id=" + current_user_id;
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.setInstanceFollowRedirects(false);
-			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(60000); // 60 Seconds
-			connection.setReadTimeout(60000); // 60 Seconds
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded;charset=UTF-8");
-
-			OutputStreamWriter writer = new OutputStreamWriter(
-					connection.getOutputStream());
-			writer.write(urlParameters);
-			writer.flush();
-			String line, retJson = "";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-
-			while ((line = reader.readLine()) != null) {
-				retJson += line;
-			}
-			writer.close();
-			reader.close();
+			urlParameters = "&current_user_id=" + current_user_id;
+			retJson = Connection.connect(serviceUrl, urlParameters,
+					"POST", "application/x-www-form-urlencoded;charset=UTF-8");
 			Map<String, Vector<Post>> PassedMsg = new HashMap<String, Vector<Post>>();
 			JSONParser parser = new JSONParser();
 			JSONArray array = (JSONArray) parser.parse(retJson);
@@ -218,23 +136,18 @@ public class PostController {
 
 			PassedMsg.put("PostsList", msg);
 			return Response.ok(new Viewable("/jsp/posts", PassedMsg)).build();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * UserEntity user = new UserEntity(uname, email, pass);
-		 * user.saveUser(); return uname;
-		 */
 		return null;
 	}
 
+	/**
+	 * 
+	 * this method for search about tag
+	 **/
+	
 	@POST
 	@Path("/searchtag")
 	@Produces("text/html")
@@ -244,36 +157,12 @@ public class PostController {
 		current_user_id = (String) req.getSession().getAttribute(
 				"current_user_id");
 
-		String serviceUrl = "http://localhost:8888/rest/SearchTagService";
+		serviceUrl = "http://localhost:8888/rest/SearchTagService";
 		try {
-			URL url = new URL(serviceUrl);
-			String urlParameters = "&current_user_id=" + current_user_id
+			urlParameters = "&current_user_id=" + current_user_id
 					+ "&tagname=" + tagname;
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.setInstanceFollowRedirects(false);
-			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(60000); // 60 Seconds
-			connection.setReadTimeout(60000); // 60 Seconds
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded;charset=UTF-8");
-
-			OutputStreamWriter writer = new OutputStreamWriter(
-					connection.getOutputStream());
-			writer.write(urlParameters);
-			writer.flush();
-			String line, retJson = "";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-
-			while ((line = reader.readLine()) != null) {
-				retJson += line;
-			}
-			writer.close();
-			reader.close();
+			retJson = Connection.connect(serviceUrl, urlParameters,
+					"POST", "application/x-www-form-urlencoded;charset=UTF-8");
 			Map<String, Vector<Post>> PassedMsg = new HashMap<String, Vector<Post>>();
 			JSONParser parser = new JSONParser();
 			JSONArray array = (JSONArray) parser.parse(retJson);
@@ -286,65 +175,39 @@ public class PostController {
 
 			PassedMsg.put("PostsList", msg);
 			return Response.ok(new Viewable("/jsp/tags", PassedMsg)).build();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * UserEntity user = new UserEntity(uname, email, pass);
-		 * user.saveUser(); return uname;
-		 */
 		return null;
 	}
 
-	public void likepost(@Context HttpServletRequest req , @FormParam("current_user_id") String current_user_id ,
+	/**
+	 * 
+	 * this method for like post given its id
+	 **/
+	
+	public void likepost(@Context HttpServletRequest req,
+			@FormParam("current_user_id") String current_user_id,
 			@FormParam("post_id") String post_id) {
-		
-		current_user_id = (String) req.getSession().getAttribute("current_user_id"); 
-		String serviceUrl = "http://localhost:8888/rest/LikePostService";
-		try {
-			URL url = new URL(serviceUrl);
-			String urlParameters = "post_id=" + post_id + "&current_user_id=" + current_user_id;
 
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.setInstanceFollowRedirects(false);
-			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(60000); // 60 Seconds
-			connection.setReadTimeout(60000); // 60 Seconds
+		current_user_id = (String) req.getSession().getAttribute(
+				"current_user_id");
+		serviceUrl = "http://localhost:8888/rest/LikePostService";
 
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded;charset=UTF-8");
-			OutputStreamWriter writer = new OutputStreamWriter(
-					connection.getOutputStream());
-			writer.write(urlParameters);
-			writer.flush();
-			String line, retJson = "";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
+		urlParameters = "post_id=" + post_id + "&current_user_id="
+				+ current_user_id;
 
-			while ((line = reader.readLine()) != null) {
-				retJson += line;
-			}
-			writer.close();
-			reader.close(); 
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+		retJson = Connection.connect(serviceUrl, urlParameters, "POST",
+				"application/x-www-form-urlencoded;charset=UTF-8");
+
 	}
 
+	/**
+	 * 
+	 * this method for share post
+	 **/
+	
 	@POST
 	@Path("/sharepost")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -354,36 +217,13 @@ public class PostController {
 
 		current_user_id = (String) req.getSession().getAttribute(
 				"current_user_id");
-		String serviceUrl = "http://localhost:8888/rest/SharePostService";
+		serviceUrl = "http://localhost:8888/rest/SharePostService";
 		try {
-			URL url = new URL(serviceUrl);
-			String urlParameters = "post_id=" + post_id + "&current_user_id="
+			urlParameters = "post_id=" + post_id + "&current_user_id="
 					+ current_user_id;
 
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.setInstanceFollowRedirects(false);
-			connection.setRequestMethod("POST");
-			connection.setConnectTimeout(60000); // 60 Seconds
-			connection.setReadTimeout(60000); // 60 Seconds
-
-			connection.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded;charset=UTF-8");
-			OutputStreamWriter writer = new OutputStreamWriter(
-					connection.getOutputStream());
-			writer.write(urlParameters);
-			writer.flush();
-			String line, retJson = "";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-
-			while ((line = reader.readLine()) != null) {
-				retJson += line;
-			}
-			writer.close();
-			reader.close();
+			retJson = Connection.connect(serviceUrl, urlParameters,
+					"POST", "application/x-www-form-urlencoded;charset=UTF-8");
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
@@ -391,20 +231,10 @@ public class PostController {
 				return "Error , try again";
 			if (object.get("Status").equals("OK"))
 				return "Post Created Successfully";
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * UserEntity user = new UserEntity(uname, email, pass);
-		 * user.saveUser(); return uname;
-		 */
 		return null;
 
 	}

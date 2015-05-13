@@ -238,8 +238,7 @@ public class Page {
 		return true;
 	}
     public static boolean likePage(String userID ,String pageID) {
-		long owner = Long.parseLong(userID);
-		long page = Long.parseLong(pageID);
+		long owner = Long.parseLong(userID) , page = Long.parseLong(pageID);
 		
 		if (isLiked(userID,pageID))  return false;
 		

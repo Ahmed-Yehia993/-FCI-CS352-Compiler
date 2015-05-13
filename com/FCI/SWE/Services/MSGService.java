@@ -33,7 +33,6 @@ public class MSGService {
 		String timestamp = dateFormat.format(cal.getTime()).toString();
 		
 		Message m = new Message(CurrentUserID, recieverID,recieverID, timestamp, text);
-		//System.out.println("current_user_id = " + CurrentUserID);
 		if (m.sendMessage())
 			object.put("Status", "OK");
 		else
@@ -58,7 +57,6 @@ public class MSGService {
 	@Path("/ViewMessageService")
 	public String ViewMessageService(@FormParam("current_user_id") String CurrentUserID ,@FormParam("receiverID") String receiverID , @FormParam("group") String group ,
 			@FormParam("single") String single) {
-		//System.out.println("radio : " + single + " : g = "+ group);
 		Vector<Message> msg;
 		if(group.equals("null"))
 		{
@@ -77,7 +75,6 @@ public class MSGService {
 			object.put("times", m.getTimeStamp());
 			object.put("receiverID", m.getReceiverID());
 			object.put("seen", "1");
-			//System.out.println("t : " + m.getTimeStamp());
 			returnedJson.add(object);
 		}
 
@@ -100,7 +97,6 @@ public class MSGService {
 			object.put("times", m.getTimeStamp());
 			object.put("receiverID", m.getReceiverID());
 			object.put("seen", m.getSeen());
-			//System.out.println("t : " + m.getTimeStamp());
 			returnedJson.add(object);
 		}
 

@@ -1,6 +1,5 @@
 package com.FCI.SWE.Models;
 
-import java.util.Date;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -10,21 +9,10 @@ import org.json.simple.parser.ParseException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
-/**
- * <h1>User Entity class</h1>
- * <p>
- * This class will act as a model for user, it will holds user data
- * </p>
- *
- * @author Mohamed Samir
- * @version 1.0
- * @since 2014-02-12
- */
 public class User {
 	private long id;
 	public String name;
@@ -61,15 +49,17 @@ public class User {
 	public long getId() {
 		return id;
 	}
+
 	public String getIdString() {
 		return Long.toString(id);
 	}
+
 	public void setName(String name) {
-		this.name =  name;
+		this.name = name;
 	}
 
 	public void setEmail(String email) {
-		this.email =  email;
+		this.email = email;
 	}
 
 	public String getName() {
@@ -109,16 +99,26 @@ public class User {
 			user.setName(object.get("name").toString());
 			user.setEmail(object.get("email").toString());
 			user.setId(Long.parseLong(object.get("id").toString()));
-			
+
 			return user;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 
 	}
+
+	/**
+	 * 
+	 * This static method will form User class using json format contains user
+	 * data
+	 * 
+	 * @param json
+	 *            String in json format contains user data
+	 * @return Constructed user entity
+	 */
 	public static User getUser(String json) {
 		JSONParser parser = new JSONParser();
 		try {
@@ -126,12 +126,10 @@ public class User {
 			currentActiveUser = new User(object.get("name").toString(), object
 					.get("email").toString(), object.get("password").toString());
 			System.out.println(object.get("id").toString());
-			// if (currentActiveUser != null)
 			currentActiveUser
 					.setId(Long.parseLong(object.get("id").toString()));
 			return currentActiveUser;
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -172,7 +170,12 @@ public class User {
 
 		return null;
 	}
-    
+
+	/**
+	 * This method will get userName given user id from datastore
+	 * 
+	 * @return UserName if found or null
+	 */
 	public static String getUserNameByID(String id) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -186,7 +189,12 @@ public class User {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * This method will get user object from datastore
+	 * 
+	 * @return User if found or null
+	 */
 	public static User getUser(long id) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -217,35 +225,31 @@ public class User {
 		Query gaeQuery = new Query("users");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
-        
-        if(list.size() != 0)
-        {
-    		for (Entity entity : pq.asIterable()) {
-    			if (entity.getProperty("email").toString().equals(this.email)) {				
-    				return false;
-    			}
-    		}
-    		
-    		Entity employee = new Entity("users", list.get(list.size() - 1)
-    				.getKey().getId() + 1);
 
-    		employee.setProperty("name", this.name);
-    		employee.setProperty("email", this.email);
-    		employee.setProperty("password", this.password);
+		if (list.size() != 0) {
+			for (Entity entity : pq.asIterable()) {
+				if (entity.getProperty("email").toString().equals(this.email)) {
+					return false;
+				}
+			}
 
-    		datastore.put(employee);
-        }
-        else
-        {
-    		Entity employee = new Entity("users",1);
+			Entity employee = new Entity("users", list.get(list.size() - 1)
+					.getKey().getId() + 1);
 
-    		employee.setProperty("name", this.name);
-    		employee.setProperty("email", this.email);
-    		employee.setProperty("password", this.password);
+			employee.setProperty("name", this.name);
+			employee.setProperty("email", this.email);
+			employee.setProperty("password", this.password);
 
-    		datastore.put(employee);
-        }
+			datastore.put(employee);
+		} else {
+			Entity employee = new Entity("users", 1);
 
+			employee.setProperty("name", this.name);
+			employee.setProperty("email", this.email);
+			employee.setProperty("password", this.password);
+
+			datastore.put(employee);
+		}
 
 		return true;
 

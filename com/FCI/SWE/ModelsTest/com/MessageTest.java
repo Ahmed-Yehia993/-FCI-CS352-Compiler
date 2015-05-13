@@ -1,4 +1,5 @@
 package com.FCI.SWE.ModelsTest.com;
+
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -17,7 +18,6 @@ public class MessageTest {
 	@Test(dataProvider = "getMsgByID")
 	public void getMsgByID(boolean result, long id) {
 		Assert.assertEquals(result, Message.getMsgByID(id));
-		// throw new RuntimeException("Test not implemented");
 	}
 
 	@DataProvider(name = "seenMsg")
@@ -28,9 +28,8 @@ public class MessageTest {
 	}
 
 	@Test(dataProvider = "seenMsg")
-	public void seenMsg(boolean result,String msgID,long myID) {
+	public void seenMsg(boolean result, String msgID, long myID) {
 		Assert.assertEquals(result, Message.seenMsg(msgID, myID));
-		//throw new RuntimeException("Test not implemented");
 	}
-	
-	}
+
+}

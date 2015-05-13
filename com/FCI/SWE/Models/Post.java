@@ -18,16 +18,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 public class Post {
-	private long id;
-	private String userID;
-	private long pageID;
-	private String text;
-	private String privacy;
-	private String hashTag;
-	private String creationTime;
-	private long numberOFLike;
-	private long numberOFShare;
-	private String va;
+	private String userID, text, privacy, hashTag, creationTime, va;
+	private long id, pageID, numberOFLike, numberOFShare;
 
 	public Post(String userID, long pageID, String text, String creationTime,
 			long numberOFLike) {
@@ -39,7 +31,6 @@ public class Post {
 	}
 
 	public Post() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void setId(long id) {
@@ -150,8 +141,13 @@ public class Post {
 
 	}
 
-	public static boolean updatelikeCounter(String post) {
-		long postID = Long.parseLong(post);
+	/**
+	 * This method will be used to update post likes counter by +1 in datastore
+	 * 
+	 * @return boolean if user is saved correctly or not
+	 */
+	public static boolean updatelikeCounter(String postid) {
+		long postID = Long.parseLong(postid);
 		DatastoreService data = DatastoreServiceFactory.getDatastoreService();
 		Query gaQuery = new Query("pagesposts");
 		PreparedQuery p = data.prepare(gaQuery);
@@ -177,6 +173,11 @@ public class Post {
 		return true;
 	}
 
+	/**
+	 * This method will be used to like post to table postslikes in datastore
+	 * 
+	 * @return boolean if user is saved correctly or not
+	 */
 	public static boolean likePost(String userID, String postID) {
 		long owner = Long.parseLong(userID);
 		long post = Long.parseLong(postID);
@@ -210,6 +211,11 @@ public class Post {
 		return true;
 	}
 
+	/**
+	 * This method will be used to like post to table pagesposts in datastore
+	 * 
+	 * @return boolean if user is saved correctly or not
+	 */
 	public static boolean updatelikeCounter(String post, int cha) {
 		long postID = Long.parseLong(post);
 		DatastoreService data = DatastoreServiceFactory.getDatastoreService();
@@ -237,6 +243,11 @@ public class Post {
 		return true;
 	}
 
+	/**
+	 * This method will be used to save post to table in datastore
+	 * 
+	 * @return boolean if user is saved correctly or not
+	 */
 	public static boolean CreatePost(String text, String ownerID, String privacy) {
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -290,6 +301,12 @@ public class Post {
 		return true;
 	}
 
+	/**
+	 * This method will be used to increase shares counter by 1 to table
+	 * pagesposts in datastore
+	 * 
+	 * @return boolean if user is saved correctly or not
+	 */
 	public static boolean UpdateSharesCounter(String userID, String postID) {
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -336,6 +353,11 @@ public class Post {
 		return true;
 	}
 
+	/**
+	 * This method will be used to liker of post postssposts in datastore
+	 * 
+	 * @return boolean if user is saved correctly or not
+	 */
 	public static HashSet<Long> getUserLikePost(String curentID) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -353,6 +375,12 @@ public class Post {
 		return temp;
 	}
 
+	/**
+	 * This method will be used to check if the current user is like the post or
+	 * not in datastore
+	 * 
+	 * @return boolean if user is saved correctly or not
+	 */
 	public static boolean isLikePost(String userID, String postID) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -368,6 +396,11 @@ public class Post {
 		return false;
 	}
 
+	/**
+	 * This method will be used to dislike of post in datastore
+	 * 
+	 * @return boolean if user is saved correctly or not
+	 */
 	public static void disLike(String userID, String postID) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();

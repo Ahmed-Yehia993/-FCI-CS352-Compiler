@@ -75,8 +75,7 @@ public class PostService {
 	public String TimeLineService(
 			@FormParam("current_user_id") String CurrentUserID) {
 		Vector<Post> post = Page.getUserTimeLine(CurrentUserID);
-		HashSet<Long> likePostes = Post.getUserLikePost(CurrentUserID);
-//System.out.println("size of set " + likePostes.size());
+		HashSet<Long> likePostes = Post.getUserLikePost(CurrentUserID); 
 		JSONArray returnedJson = new JSONArray();
 		for (Post p : post) {
 			JSONObject object = new JSONObject();
@@ -88,8 +87,7 @@ public class PostService {
 			object.put("CreationTime", p.getCreationTime());
 			object.put("NumberOFLike", p.getNumberOFLike());
 			object.put("NumberOFShare", p.getNumberOFShare());
-			object.put("id", p.getId());
-		//	System.out.println("post Service " +p.getId());
+			object.put("id", p.getId()); 
 			object.put("va", (likePostes.contains(p.getId()) ? "UnLike"
 					: "Like"));
 			returnedJson.add(object);
